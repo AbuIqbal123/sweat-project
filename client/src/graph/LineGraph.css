@@ -1,0 +1,63 @@
+
+
+/* Container styles */
+.study-hours-line-graph-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px;
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Title styles */
+.graph-title {
+  font-size: 24px;
+  margin-bottom: 16px;
+  color: #333;
+}
+
+/* Chart container styles */
+.chart-container {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Legend styles */
+.recharts-legend-wrapper {
+  margin-top: 40px; /* Add margin-top to increase space between legend and X-axis header */
+}
+
+/* Tooltip styles */
+.recharts-tooltip {
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* X and Y axis label styles */
+.recharts-cartesian-axis-label {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* X and Y axis line styles */
+.recharts-cartesian-axis-line {
+  stroke: #888;
+}
+
+/* X and Y axis tick styles */
+.recharts-cartesian-axis-tick {
+  fill: #888;
+}
+
+/* Lines styles */
+.recharts-line-dots {
+  display: none; /* Hide dots on the lines */
+}

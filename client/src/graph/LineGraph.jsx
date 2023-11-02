@@ -1,3 +1,4 @@
+// StudyHoursLineGraph.jsx
 import React from "react";
 import {
   LineChart,
@@ -8,6 +9,7 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
+import "./LineGraph.css";
 
 const distributeStudyHours = (studyHours, deadline) => {
   const maxHoursPerWeek = 20;
@@ -40,7 +42,11 @@ const distributeStudyHours = (studyHours, deadline) => {
 
 const StudyHoursLineGraph = ({ moduleData }) => {
   if (!moduleData) {
-    return <div>No data found for the selected module.</div>;
+    return (
+      <div className="study-hours-line-graph-container">
+        No data found for the selected module.
+      </div>
+    );
   }
 
   const weeks = Array.from({ length: 16 }, (_, i) => i);
@@ -78,7 +84,7 @@ const StudyHoursLineGraph = ({ moduleData }) => {
 
       return coursework.distribution[week];
     } else {
-      return 0; // Handle weeks with no coursework data
+      return 0;
     }
   });
 
@@ -92,46 +98,54 @@ const StudyHoursLineGraph = ({ moduleData }) => {
   );
 
   const data = weeks.map((week) => ({
-    week: week.toString(),
+    week: week,
     Labs: labHours[week],
     Lectures: lectureHours[week],
     Tutorials: tutorialHours[week],
     "Exam Prep": examPrepHours[week],
-    "Coursework Prep": courseworkPrepHours[week], // Fixed the legend key
+    "Coursework Prep": courseworkPrepHours[week],
     "Total Study Hours": totalStudyHours[week],
   }));
 
   return (
-    <LineChart
-      width={600}
-      height={300}
-      data={data}
-      margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-    >
-      <CartesianGrid strokeDasharray="3 3" />
-      <XAxis
-        dataKey="week"
-        domain={[0, 15]}
-        allowDataOverflow={true}
-        label={{ value: "Week", position: "insideBottom", offset: -10 }}
-      />
-      <YAxis
-        label={{ value: "Study Hours", angle: -90, position: "insideLeft" }}
-      />
-      <Tooltip />
-      <Legend />
-      <Line
-        type="monotone"
-        dataKey="Labs"
-        stroke="#8884d8"
-        activeDot={{ r: 8 }}
-      />
-      <Line type="monotone" dataKey="Lectures" stroke="#82ca9d" />
-      <Line type="monotone" dataKey="Tutorials" stroke="#ffc658" />
-      <Line type="monotone" dataKey="Exam Prep" stroke="#000" />
-      <Line type="monotone" dataKey="Coursework Prep" stroke="#ff7300" />
-      <Line type="monotone" dataKey="Total Study Hours" stroke="#8884d8" />
-    </LineChart>
+    <div className="study-hours-line-graph-container">
+      <div className="graph-title">Study Hours Line Graph</div>
+      <div className="chart-container">
+        <LineChart
+          width={600}
+          height={300}
+          data={data}
+          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis
+            dataKey="week"
+            domain={[0, 15]}
+            allowDataOverflow={true}
+            label={{ value: "Week", position: "insideBottom", offset: -10 }}
+          />
+          <YAxis
+            label={{ value: "Study Hours", angle: -90, position: "insideLeft" }}
+          />
+          <Tooltip
+            labelFormatter={(value) => `Week ${value}`} // Add "Week" prefix to tooltip label
+            formatter={(value) => `${value} hours`} // Add " hours" suffix to the value
+          />
+          ;
+          <Legend wrapperStyle={{ marginTop: "30px" }} />
+          <Line
+            type="monotone"
+            dataKey="Labs"
+            stroke="#8884d8"
+            activeDot={{ r: 8 }}
+          />
+          <Line type="monotone" dataKey="Lectures" stroke="#82ca9d" />
+          <Line type="monotone" dataKey="Tutorials" stroke="#ffc658" />
+          <Line type="monotone" dataKey="Exam Prep" stroke="#000" />
+          <Line type="monotone" dataKey="Coursework Prep" stroke="#ff7300" />
+        </LineChart>
+      </div>
+    </div>
   );
 };
 
