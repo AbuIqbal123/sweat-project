@@ -25,6 +25,14 @@ app.use(cors({ origin: true, credentials: true }));
 const testRoutes = require("./routes/test");
 app.use("/", testRoutes);
 
+const ModuleModel = require("./models/moduleSchema");
+app.get("/getModules", (req, res) => {
+  ModuleModel.find()
+    .then((modules) => res.json(modules))
+    .catch((err) => res.status(400).json("Error: " + err));
+    console.log("getModules");
+});
+
 // port
 const port = process.env.PORT || 8000;
 
