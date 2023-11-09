@@ -1,4 +1,3 @@
-// StudyHoursLineGraph.jsx
 import React from "react";
 import {
   LineChart,
@@ -11,36 +10,59 @@ import {
 } from "recharts";
 import "./LineGraph.css";
 
-const distributeStudyHours = (studyHours, deadline) => {
+const distributeStudyHours = (studyHours, deadline, style) => {
   const maxHoursPerWeek = 20;
 
   if (studyHours <= maxHoursPerWeek) {
     const distribution = Array(16).fill(0);
     distribution[deadline] = studyHours;
+    console.log(`Week ${deadline} Updated Distribution:`, [...distribution]);
     return distribution;
   }
 
   const numWeeks = Math.ceil(studyHours / maxHoursPerWeek);
   const startWeek = deadline - numWeeks + 1;
-  const hoursPerWeek = Math.floor(studyHours / numWeeks);
 
   const distribution = Array(16).fill(0);
 
-  for (let i = 0; i < numWeeks; i++) {
-    distribution[startWeek + i] = hoursPerWeek;
-  }
+  if (style === "balanced") {
+    const hoursPerWeek = Math.floor(studyHours / numWeeks);
+    const remainingHours = studyHours % numWeeks;
 
-  if (studyHours % maxHoursPerWeek !== 0) {
-    const remainingHours = studyHours % maxHoursPerWeek;
-    for (let i = 0; i < remainingHours; i++) {
-      distribution[startWeek + i] += 1;
+    for (let i = 0; i < numWeeks; i++) {
+      distribution[startWeek + i] = hoursPerWeek;
+      if (i < remainingHours) {
+        distribution[startWeek + i] += 1;
+      }
+    }
+  } else if (style === "procrastinator") {
+    let distributedHours = 0;
+    for (let i = startWeek + numWeeks - 1; i >= startWeek; i--) {
+      const additionalHours = Math.min(
+        maxHoursPerWeek,
+        studyHours - distributedHours
+      );
+      distribution[i] += additionalHours;
+      distributedHours += additionalHours;
+    }
+  } else if (style === "earlybird") {
+    let distributedHours = 0;
+    for (let i = startWeek; i < startWeek + numWeeks; i++) {
+      const additionalHours = Math.min(
+        maxHoursPerWeek,
+        studyHours - distributedHours
+      );
+      distribution[i] += additionalHours;
+      distributedHours += additionalHours;
     }
   }
+
+  console.log(`Week ${deadline} Updated Distribution:`, [...distribution]);
 
   return distribution;
 };
 
-const StudyHoursLineGraph = ({ moduleData }) => {
+const StudyHoursLineGraph = ({ moduleData, studyStyle }) => {
   if (!moduleData) {
     return (
       <div className="study-hours-line-graph-container">
@@ -78,11 +100,15 @@ const StudyHoursLineGraph = ({ moduleData }) => {
       if (coursework.distribution.length === 0) {
         coursework.distribution = distributeStudyHours(
           coursework.studyHours,
-          coursework.deadline
+          coursework.deadline,
+          studyStyle
         );
+        console.log(`Week ${week} Distribution:`, coursework.distribution);
       }
 
-      return coursework.distribution[week];
+      const result = coursework.distribution[week] || 0; // Ensure the value is 0 if undefined
+      console.log(`Week ${week} Result:`, result);
+      return result;
     } else {
       return 0;
     }
@@ -94,7 +120,7 @@ const StudyHoursLineGraph = ({ moduleData }) => {
       lectureHours[week] +
       tutorialHours[week] +
       examPrepHours[week] +
-      courseworkPrepHours[week]
+      (courseworkPrepHours[week] || 0)
   );
 
   const data = weeks.map((week) => ({
@@ -106,6 +132,8 @@ const StudyHoursLineGraph = ({ moduleData }) => {
     "Coursework Prep": courseworkPrepHours[week],
     "Total Study Hours": totalStudyHours[week],
   }));
+
+  console.log("Data:", JSON.stringify(data, null, 2)); // Log the string representation of data
 
   return (
     <div className="study-hours-line-graph-container">
@@ -128,8 +156,8 @@ const StudyHoursLineGraph = ({ moduleData }) => {
             label={{ value: "Study Hours", angle: -90, position: "insideLeft" }}
           />
           <Tooltip
-            labelFormatter={(value) => `Week ${value}`} // Add "Week" prefix to tooltip label
-            formatter={(value) => `${value} hours`} // Add " hours" suffix to the value
+            labelFormatter={(value) => `Week ${value}`}
+            formatter={(value) => `${value} hours`}
           />
           ;
           <Legend wrapperStyle={{ marginTop: "30px" }} />

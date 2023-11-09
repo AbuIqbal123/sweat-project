@@ -6,6 +6,7 @@ import StudyHoursLineGraph from "./graph/LineGraph";
 
 function App() {
   const [selectedModule, setSelectedModule] = useState("ELEC362");
+  const [selectedStudyStyle, setSelectedStudyStyle] = useState("balanced");
   const [modules, setModules] = useState({});
   const [moduleData, setModuleData] = useState(null);
 
@@ -13,22 +14,29 @@ function App() {
     axios
       .get("http://localhost:8000/getModules")
       .then((response) => {
-        console.log("Fetched modules:", response.data); // Add this log
+        console.log("Fetched modules:", response.data);
         setModules(response.data[0]);
-        // Set the default module data when the component mounts
         setModuleData(response.data[0][selectedModule]);
-        console.log("Default module data:", response.data[0][selectedModule]); // Add this log
+        console.log("Default module data:", response.data[0][selectedModule]);
       })
       .catch((err) => console.log(err));
-  }, []);
+  }, [selectedModule]);
+
+  useEffect(() => {
+    // Update the graph whenever selectedStudyStyle changes
+    setModuleData(modules[selectedModule]);
+  }, [selectedStudyStyle, modules, selectedModule]);
 
   const handleModuleChange = (event) => {
     const moduleCode = event.target.value;
     setSelectedModule(moduleCode);
-
-    // Set the module data based on the selected module
     setModuleData(modules[moduleCode]);
-    console.log("Selected module data:", modules[moduleCode]); // Add this log
+    console.log("Selected module data:", modules[moduleCode]);
+  };
+
+  const handleStudyStyleChange = (event) => {
+    const style = event.target.value;
+    setSelectedStudyStyle(style);
   };
 
   return (
@@ -42,9 +50,20 @@ function App() {
             </option>
           ))}
         </select>
+
+        <select value={selectedStudyStyle} onChange={handleStudyStyleChange}>
+          <option value="balanced">Balanced</option>
+          <option value="procrastinator">Procrastinator</option>
+          <option value="earlybird">Early Bird</option>
+        </select>
       </div>
+
       <div className="line-graph">
-        <StudyHoursLineGraph moduleData={moduleData} />
+        {/* Pass the selectedStudyStyle as a prop to StudyHoursLineGraph */}
+        <StudyHoursLineGraph
+          moduleData={moduleData}
+          studyStyle={selectedStudyStyle}
+        />
       </div>
     </div>
   );
