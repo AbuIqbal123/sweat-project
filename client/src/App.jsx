@@ -3,6 +3,7 @@ import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import StudyHoursLineGraph from "./graph/LineGraph";
+import InputForm from "./graph/InputForm";
 
 function App() {
   const [selectedModule, setSelectedModule] = useState("ELEC362");
@@ -64,6 +65,9 @@ function App() {
           moduleData={moduleData}
           studyStyle={selectedStudyStyle}
         />
+      </div>
+      <div className="input-form">
+        <InputForm />
       </div>
     </div>
   );

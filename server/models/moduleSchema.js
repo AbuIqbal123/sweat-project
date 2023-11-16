@@ -1,3 +1,5 @@
+//models/moduleSchema.js
+
 const mongoose = require("mongoose");
 
 const moduleSchema = new mongoose.Schema({
