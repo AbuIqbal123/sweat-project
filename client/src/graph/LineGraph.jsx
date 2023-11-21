@@ -10,9 +10,12 @@ import {
 } from "recharts";
 import "./LineGraph.css";
 
+// Function to distribute study hours based on different styles
 const distributeStudyHours = (studyHours, deadline, style) => {
+  // Maximum study hours per week
   const maxHoursPerWeek = 20;
 
+  // If study hours fit within one week, distribute them accordingly
   if (studyHours <= maxHoursPerWeek) {
     const distribution = Array(16).fill(0);
     distribution[deadline] = studyHours;
@@ -20,12 +23,13 @@ const distributeStudyHours = (studyHours, deadline, style) => {
     return distribution;
   }
 
+  // If study hours exceed one week, distribute them based on the selected style
   const numWeeks = Math.ceil(studyHours / maxHoursPerWeek);
   const startWeek = deadline - numWeeks + 1;
-
   const distribution = Array(16).fill(0);
 
   if (style === "balanced") {
+    // Distribute hours evenly across weeks
     const hoursPerWeek = Math.floor(studyHours / numWeeks);
     const remainingHours = studyHours % numWeeks;
 
@@ -36,6 +40,7 @@ const distributeStudyHours = (studyHours, deadline, style) => {
       }
     }
   } else if (style === "procrastinator") {
+    // Distribute hours in a procrastinator style
     let distributedHours = 0;
     for (let i = startWeek + numWeeks - 1; i >= startWeek; i--) {
       const additionalHours = Math.min(
@@ -46,6 +51,7 @@ const distributeStudyHours = (studyHours, deadline, style) => {
       distributedHours += additionalHours;
     }
   } else if (style === "earlybird") {
+    // Distribute hours in an early bird style
     let distributedHours = 0;
     for (let i = startWeek; i < startWeek + numWeeks; i++) {
       const additionalHours = Math.min(
@@ -58,11 +64,11 @@ const distributeStudyHours = (studyHours, deadline, style) => {
   }
 
   console.log(`Week ${deadline} Updated Distribution:`, [...distribution]);
-
   return distribution;
 };
 
 const StudyHoursLineGraph = ({ moduleData, studyStyle }) => {
+  // Return placeholder if no data is available
   if (!moduleData) {
     return (
       <div className="study-hours-line-graph-container">
@@ -71,8 +77,10 @@ const StudyHoursLineGraph = ({ moduleData, studyStyle }) => {
     );
   }
 
+  // Array representing weeks
   const weeks = Array.from({ length: 16 }, (_, i) => i);
 
+  // Calculate hours for different study components
   const labHours = weeks.map((week) =>
     moduleData.labHours.some((lab) => lab.week === week) ? 2 : 0
   );
@@ -91,50 +99,92 @@ const StudyHoursLineGraph = ({ moduleData, studyStyle }) => {
       : 0
   );
 
+  // Calculate coursework preparation hours distribution
   const courseworkPrepHours = weeks.map((week) => {
     const coursework = moduleData.courseworkPrep.find(
       (coursework) => coursework.deadline === week
     );
 
-    if (coursework) {
-      if (coursework.distribution.length === 0) {
-        coursework.distribution = distributeStudyHours(
-          coursework.studyHours,
-          coursework.deadline,
-          studyStyle
-        );
-        console.log(`Week ${week} Distribution:`, coursework.distribution);
-      }
-
-      const result = coursework.distribution[week] || 0; // Ensure the value is 0 if undefined
-      console.log(`Week ${week} Result:`, result);
-      return result;
-    } else {
-      return 0;
+    if (coursework && coursework.distribution.length === 0) {
+      coursework.distribution = distributeStudyHours(
+        coursework.studyHours,
+        coursework.deadline,
+        studyStyle
+      );
+      console.log("coursework distribution", coursework.distribution);
+      return coursework.distribution;
     }
+
+    // Return array filled with zeros if no coursework or distribution available
+    return coursework ? coursework.distribution : Array(16).fill(0);
   });
 
+  console.log("Coursework Prep Hours:", courseworkPrepHours);
+
+  // Merge coursework prep distributions into a single distribution
+  const mergedCourseworkPrepDistribution = courseworkPrepHours.reduce(
+    (acc, distribution) => {
+      for (let i = 0; i < distribution.length; i++) {
+        acc[i] = (acc[i] || 0) + distribution[i];
+      }
+      return acc;
+    },
+    Array(16).fill(0)
+  );
+
+  console.log(
+    "Merged Coursework Prep Distribution:",
+    mergedCourseworkPrepDistribution
+  );
+
+  // Prepare data for coursework prep for line chart
+  const courseworkPrepData = mergedCourseworkPrepDistribution.map(
+    (hours, index) => {
+      console.log(`Week ${index}: Coursework Prep Hours - ${hours}`);
+      return {
+        week: index,
+        "Coursework Prep": hours,
+      };
+    }
+  );
+
+  console.log("Coursework Prep Data:", courseworkPrepData);
+
+  // Calculate total study hours for each week
   const totalStudyHours = weeks.map(
     (week) =>
       labHours[week] +
       lectureHours[week] +
       tutorialHours[week] +
       examPrepHours[week] +
-      (courseworkPrepHours[week] || 0)
+      courseworkPrepHours.reduce(
+        (acc, distribution) => acc + (distribution[week] || 0),
+        0
+      )
   );
 
-  const data = weeks.map((week) => ({
-    week: week,
-    Labs: labHours[week],
-    Lectures: lectureHours[week],
-    Tutorials: tutorialHours[week],
-    "Exam Prep": examPrepHours[week],
-    "Coursework Prep": courseworkPrepHours[week],
-    "Total Study Hours": totalStudyHours[week],
-  }));
+  // Prepare final data for the line chart
+  const data = weeks.map((week) => {
+    const courseworkData = courseworkPrepData.find(
+      (data) => data.week === week
+    );
 
-  console.log("Data:", JSON.stringify(data, null, 2)); // Log the string representation of data
+    const dataObj = {
+      week,
+      Labs: labHours[week],
+      Lectures: lectureHours[week],
+      Tutorials: tutorialHours[week],
+      "Exam Prep": examPrepHours[week],
+      "Coursework Prep": courseworkData ? courseworkData["Coursework Prep"] : 0,
+      "Total Study Hours": totalStudyHours[week],
+    };
 
+    return dataObj;
+  });
+
+  console.log("Data:", data);
+
+  // Return the study hours line graph
   return (
     <div className="study-hours-line-graph-container">
       <div className="graph-title">Study Hours Line Graph</div>
@@ -145,6 +195,7 @@ const StudyHoursLineGraph = ({ moduleData, studyStyle }) => {
           data={data}
           margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
         >
+          {/* Chart components */}
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
             dataKey="week"
@@ -159,8 +210,8 @@ const StudyHoursLineGraph = ({ moduleData, studyStyle }) => {
             labelFormatter={(value) => `Week ${value}`}
             formatter={(value) => `${value} hours`}
           />
-          ;
           <Legend wrapperStyle={{ marginTop: "30px" }} />
+          {/* Lines for different study components */}
           <Line
             type="monotone"
             dataKey="Labs"
