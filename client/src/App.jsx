@@ -10,29 +10,32 @@ function App() {
   const [selectedStudyStyle, setSelectedStudyStyle] = useState("balanced");
   const [modules, setModules] = useState({});
   const [moduleData, setModuleData] = useState(null);
+  const [shouldReRender, setShouldReRender] = useState(false);
 
   useEffect(() => {
     axios
       .get("http://localhost:8000/getModules")
       .then((response) => {
-        console.log("Fetched modules:", response.data);
-        setModules(response.data[0]);
-        setModuleData(response.data[0][selectedModule]);
-        console.log("Default module data:", response.data[0][selectedModule]);
+        const data = response.data[0];
+        setModules(data);
+        setModuleData(data[selectedModule]);
       })
       .catch((err) => console.log(err));
   }, [selectedModule]);
 
   useEffect(() => {
-    // Update the graph whenever selectedStudyStyle changes
-    setModuleData(modules[selectedModule]);
+    if (modules[selectedModule]) {
+      setModuleData(modules[selectedModule]);
+    }
   }, [selectedStudyStyle, modules, selectedModule]);
+
+  useEffect(() => {
+    setShouldReRender((prev) => !prev);
+  }, [selectedModule, selectedStudyStyle]);
 
   const handleModuleChange = (event) => {
     const moduleCode = event.target.value;
     setSelectedModule(moduleCode);
-    setModuleData(modules[moduleCode]);
-    console.log("Selected module data:", modules[moduleCode]);
   };
 
   const handleStudyStyleChange = (event) => {
@@ -60,8 +63,8 @@ function App() {
       </div>
 
       <div className="line-graph">
-        {/* Pass the selectedStudyStyle as a prop to StudyHoursLineGraph */}
         <StudyHoursLineGraph
+          key={shouldReRender}
           moduleData={moduleData}
           studyStyle={selectedStudyStyle}
         />

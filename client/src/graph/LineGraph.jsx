@@ -67,6 +67,60 @@ const distributeStudyHours = (studyHours, deadline, style) => {
   return distribution;
 };
 
+const CustomTooltip = ({ active, payload, label, totalStudyHours }) => {
+  if (active && payload && payload.length) {
+    const dataKeys = payload.map((data) => data.dataKey);
+    const colors = {
+      Labs: "#8884d8",
+      Lectures: "#82ca9d",
+      Tutorials: "#ffc658",
+      "Exam Prep": "#000",
+      "Coursework Prep": "#ff7300",
+    };
+
+    return (
+      <div
+        className="custom-tooltip"
+        style={{
+          backgroundColor: "white",
+          padding: "15px",
+          border: "1px solid #ccc",
+          fontSize: "14px",
+        }}
+      >
+        <p
+          className="label"
+          style={{ marginBottom: "8px", fontSize: "16px" }}
+        >{`Week ${label}`}</p>
+        {payload.map((data) => (
+          <p
+            key={data.dataKey}
+            className="data-item"
+            style={{
+              color: colors[data.dataKey],
+              margin: "8px 0",
+              fontSize: "14px",
+            }}
+          >
+            {`${data.dataKey}: ${data.value} hours`}
+          </p>
+        ))}
+        <p
+          className="total-study-hours"
+          style={{
+            marginTop: "12px",
+            borderTop: "1px solid #ccc",
+            paddingTop: "8px",
+            fontSize: "14px",
+          }}
+        >{`Total Study Hours: ${totalStudyHours[label]} hours`}</p>
+      </div>
+    );
+  }
+
+  return null;
+};
+
 const StudyHoursLineGraph = ({ moduleData, studyStyle }) => {
   // Return placeholder if no data is available
   if (!moduleData) {
@@ -176,13 +230,11 @@ const StudyHoursLineGraph = ({ moduleData, studyStyle }) => {
       Tutorials: tutorialHours[week],
       "Exam Prep": examPrepHours[week],
       "Coursework Prep": courseworkData ? courseworkData["Coursework Prep"] : 0,
-      "Total Study Hours": totalStudyHours[week],
+      "Total Study Hours": totalStudyHours[week], // Include total study hours
     };
 
     return dataObj;
   });
-
-  console.log("Data:", data);
 
   // Return the study hours line graph
   return (
@@ -207,8 +259,7 @@ const StudyHoursLineGraph = ({ moduleData, studyStyle }) => {
             label={{ value: "Study Hours", angle: -90, position: "insideLeft" }}
           />
           <Tooltip
-            labelFormatter={(value) => `Week ${value}`}
-            formatter={(value) => `${value} hours`}
+            content={<CustomTooltip totalStudyHours={totalStudyHours} />}
           />
           <Legend wrapperStyle={{ marginTop: "30px" }} />
           {/* Lines for different study components */}
@@ -216,7 +267,7 @@ const StudyHoursLineGraph = ({ moduleData, studyStyle }) => {
             type="monotone"
             dataKey="Labs"
             stroke="#8884d8"
-            activeDot={{ r: 8 }}
+            activeDot={{ r: 10 }}
           />
           <Line type="monotone" dataKey="Lectures" stroke="#82ca9d" />
           <Line type="monotone" dataKey="Tutorials" stroke="#ffc658" />
