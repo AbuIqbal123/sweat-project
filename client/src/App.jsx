@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
-import StudyHoursLineGraph from "./graph/LineGraph";
-import InputForm from "./graph/InputForm";
+import StudyHoursLineGraph from "./components/LineGraph/LineGraph";
+import InputForm from "./components/InputForm/InputForm";
 
 function App() {
   const [selectedModule, setSelectedModule] = useState("ELEC362");

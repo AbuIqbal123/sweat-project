@@ -2,25 +2,52 @@ const TransformedDataModel = require("../models/moduleSchema");
 const ENV_ID = process.env.ENV_ID;
 
 const transformInputToDatabaseSchema = async (inputData) => {
-  console.log("input data", inputData);
   try {
+    if (!Array.isArray(inputData) || inputData.length === 0) {
+      throw new Error("Invalid input data");
+    }
+
+    console.log("Input Data:", inputData);
+
     const input = inputData[0];
-    const moduleCode = input.moduleCode;
-    const moduleCredit = parseInt(input.moduleCredit);
-    const timetabledHours = parseInt(input.timetabledHours);
-    const lectures = parseInt(input.lectures);
-    const seminars = parseInt(input.seminars);
-    const tutorial = parseInt(input.tutorial);
-    const labs = parseInt(input.labs);
-    const other = parseInt(input.other);
-    const weightage = parseInt(input.weightage);
-    const deadline = parseInt(input.deadline);
+    const {
+      moduleCode,
+      moduleCredit,
+      timetabledHours,
+      lectures,
+      seminars,
+      tutorial,
+      labs,
+      other,
+      assessments,
+    } = input;
 
-    console.log("module code", moduleCode);
-    console.log("lectures", lectures);
+    const parsedModuleCredit = parseInt(moduleCredit, 10);
+    const parsedTimetabledHours = parseInt(timetabledHours, 10);
+    const parsedLectures = parseInt(lectures, 10);
+    const parsedSeminars = parseInt(seminars, 10);
+    const parsedTutorial = parseInt(tutorial, 10);
+    const parsedLabs = parseInt(labs, 10);
+    const parsedOther = parseInt(other, 10);
+    const parsedAssessmentDeadline = parseInt(assessments[0].deadline, 10);
+    const parsedAssessmentWeightage = parseInt(assessments[0].weightage, 10);
 
-    const totalStudyHours = moduleCredit * 10;
-    const privateStudyHours = totalStudyHours - timetabledHours;
+    if (
+      isNaN(parsedModuleCredit) ||
+      isNaN(parsedTimetabledHours) ||
+      isNaN(parsedLectures) ||
+      isNaN(parsedSeminars) ||
+      isNaN(parsedTutorial) ||
+      isNaN(parsedLabs) ||
+      isNaN(parsedOther) ||
+      isNaN(parsedAssessmentDeadline) ||
+      isNaN(parsedAssessmentWeightage)
+    ) {
+      throw new Error("Invalid numeric value in input");
+    }
+
+    const totalStudyHours = parsedModuleCredit * 10;
+    const privateStudyHours = totalStudyHours - parsedTimetabledHours;
 
     const createArrayWithWeeks = (hours) => {
       return Array.from({ length: 12 }, (_, index) => ({
@@ -29,50 +56,44 @@ const transformInputToDatabaseSchema = async (inputData) => {
       }));
     };
 
-    const labHours = createArrayWithWeeks(labs);
-    const lecturesData = createArrayWithWeeks(lectures);
-    const tutorialsData = createArrayWithWeeks(tutorial);
-
-    console.log("lectures", lecturesData);
+    const labHours = createArrayWithWeeks(parsedLabs);
+    const lecturesData = createArrayWithWeeks(parsedLectures);
+    const tutorialsData = createArrayWithWeeks(parsedTutorial);
 
     const examPrep = {
       weeks: [13, 14, 15],
-      weightage,
+      weightage: parsedAssessmentWeightage,
     };
 
     const courseworkPrep = [
       {
-        deadline,
-        weightage,
-        studyHours: (privateStudyHours * weightage) / 100,
+        deadline: parsedAssessmentDeadline,
+        weightage: parsedAssessmentWeightage,
+        studyHours: (privateStudyHours * parsedAssessmentWeightage) / 100,
         distributions: [],
       },
     ];
 
     const updatedData = {
-
-        moduleCode,
-        moduleCredit,
-        totalStudyHours,
-        timetabledHours,
-        privateStudyHours,
-        labHours,
-        lectures: lecturesData,
-        tutorials: tutorialsData,
-        examPrep,
-        courseworkPrep,
+      moduleCode,
+      moduleCredit: parsedModuleCredit,
+      totalStudyHours,
+      timetabledHours: parsedTimetabledHours,
+      privateStudyHours,
+      labHours,
+      lectures: lecturesData,
+      tutorials: tutorialsData,
+      examPrep,
+      courseworkPrep,
     };
-
-    const examPrepWeeks = updatedData.examPrep?.weeks ?? [];
-    const examPrepWeightage = updatedData.examPrep?.weightage ?? 0;
 
     const newData = {};
 
-    if(updatedData.examPrep) {
+    if (updatedData.examPrep) {
       newData.examPrep = {
         weeks: updatedData.examPrep.weeks,
-        weightage: updatedData.examPrep.weightage
-      }
+        weightage: updatedData.examPrep.weightage,
+      };
     }
 
     console.log("New data to save:", updatedData);

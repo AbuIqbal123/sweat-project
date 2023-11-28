@@ -58,11 +58,6 @@ const server = app.listen(port, () => {
   console.log(`Server is running on port ${port}`); // Log server running on port
 });
 
-// Debugging logs
-server.on("listening", () => {
-  console.log(`Server is listening on port ${port}`); // Log server listening on port
-});
-
 server.on("error", (err) => {
   console.error("Server error:", err); // Log server errors
 });
