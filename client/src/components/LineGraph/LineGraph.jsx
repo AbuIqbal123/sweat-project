@@ -19,7 +19,6 @@ const distributeStudyHours = (studyHours, deadline, style) => {
   if (studyHours <= maxHoursPerWeek) {
     const distribution = Array(16).fill(0);
     distribution[deadline] = studyHours;
-    console.log(`Week ${deadline} Updated Distribution:`, [...distribution]);
     return distribution;
   }
 
@@ -62,8 +61,6 @@ const distributeStudyHours = (studyHours, deadline, style) => {
       distributedHours += additionalHours;
     }
   }
-
-  console.log(`Week ${deadline} Updated Distribution:`, [...distribution]);
   return distribution;
 };
 
@@ -165,15 +162,12 @@ const StudyHoursLineGraph = ({ moduleData, studyStyle }) => {
         coursework.deadline,
         studyStyle
       );
-      console.log("coursework distribution", coursework.distribution);
       return coursework.distribution;
     }
 
     // Return array filled with zeros if no coursework or distribution available
     return coursework ? coursework.distribution : Array(16).fill(0);
   });
-
-  console.log("Coursework Prep Hours:", courseworkPrepHours);
 
   // Merge coursework prep distributions into a single distribution
   const mergedCourseworkPrepDistribution = courseworkPrepHours.reduce(
@@ -186,23 +180,15 @@ const StudyHoursLineGraph = ({ moduleData, studyStyle }) => {
     Array(16).fill(0)
   );
 
-  console.log(
-    "Merged Coursework Prep Distribution:",
-    mergedCourseworkPrepDistribution
-  );
-
   // Prepare data for coursework prep for line chart
   const courseworkPrepData = mergedCourseworkPrepDistribution.map(
     (hours, index) => {
-      console.log(`Week ${index}: Coursework Prep Hours - ${hours}`);
       return {
         week: index,
         "Coursework Prep": hours,
       };
     }
   );
-
-  console.log("Coursework Prep Data:", courseworkPrepData);
 
   // Calculate total study hours for each week
   const totalStudyHours = weeks.map(

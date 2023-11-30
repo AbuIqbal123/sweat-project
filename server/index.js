@@ -37,7 +37,6 @@ app.get("/getModules", (req, res) => {
       console.error("Error fetching modules:", err); // Error log for fetching modules
       res.status(400).json("Error: " + err);
     });
-  console.log("getModules");
 });
 
 // Route for data transformation and saving

@@ -8,7 +8,7 @@ import InputForm from "./components/InputForm/InputForm";
 function App() {
   const [selectedModule, setSelectedModule] = useState("ELEC362");
   const [selectedStudyStyle, setSelectedStudyStyle] = useState("balanced");
-  const [modules, setModules] = useState({});
+  const [modules, setModules] = useState([]);
   const [moduleData, setModuleData] = useState(null);
   const [shouldReRender, setShouldReRender] = useState(false);
 
@@ -16,12 +16,21 @@ function App() {
     axios
       .get("http://localhost:8000/getModules")
       .then((response) => {
-        const data = response.data[0];
-        setModules(data);
-        setModuleData(data[selectedModule]);
+        const data = response.data;
+        console.log("Fetched Modules:", data);
+        if (Array.isArray(data)) {
+          setModules(data);
+          if (data.length > 0) {
+            setSelectedModule(data[0].moduleCode);
+            console.log("Selected Module:", data[0].moduleCode);
+          }
+        } else {
+          console.error("Fetched data is not an array:", data);
+        }
       })
       .catch((err) => console.log(err));
-  }, [selectedModule]);
+  }, []);
+  
 
   useEffect(() => {
     if (modules[selectedModule]) {
@@ -35,6 +44,10 @@ function App() {
 
   const handleModuleChange = (event) => {
     const moduleCode = event.target.value;
+    const selectedModuleObject = modules.find(
+      (module) => module.moduleCode === moduleCode
+    );
+    setModuleData(selectedModuleObject);
     setSelectedModule(moduleCode);
   };
 
@@ -48,9 +61,10 @@ function App() {
       <div className="header">
         <h1>SWEAT Project</h1>
         <select value={selectedModule} onChange={handleModuleChange}>
-          {Object.keys(modules).map((moduleCode) => (
-            <option key={moduleCode} value={moduleCode}>
-              {moduleCode}
+          <option value="">Select Module</option>
+          {modules.map((module) => (
+            <option key={module._id} value={module.moduleCode}>
+              {module.moduleCode}
             </option>
           ))}
         </select>
