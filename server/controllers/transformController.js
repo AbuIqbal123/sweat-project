@@ -7,7 +7,7 @@ const transformInputToDatabaseSchema = async (inputData) => {
       throw new Error("Invalid input data");
     }
 
-    console.log("Input Data:", inputData);
+    console.log("Input Data:", JSON.stringify(inputData, null, 2));
 
     const input = inputData[0];
     const {
@@ -20,6 +20,7 @@ const transformInputToDatabaseSchema = async (inputData) => {
       labs,
       other,
       assessments,
+      fieldworkPlacement,
     } = input;
 
     const parsedModuleCredit = parseInt(moduleCredit, 10);
@@ -31,6 +32,7 @@ const transformInputToDatabaseSchema = async (inputData) => {
     const parsedOther = parseInt(other, 10);
     const parsedAssessmentDeadline = parseInt(assessments[0].deadline, 10);
     const parsedAssessmentWeightage = parseInt(assessments[0].weightage, 10);
+    const parsedFieldworkPlacement = parseInt(fieldworkPlacement, 10);
 
     if (
       isNaN(parsedModuleCredit) ||
@@ -41,7 +43,8 @@ const transformInputToDatabaseSchema = async (inputData) => {
       isNaN(parsedLabs) ||
       isNaN(parsedOther) ||
       isNaN(parsedAssessmentDeadline) ||
-      isNaN(parsedAssessmentWeightage)
+      isNaN(parsedAssessmentWeightage) ||
+      isNaN(parsedFieldworkPlacement)
     ) {
       throw new Error("Invalid numeric value in input");
     }
@@ -56,23 +59,37 @@ const transformInputToDatabaseSchema = async (inputData) => {
       }));
     };
 
-    const labHours = createArrayWithWeeks(parsedLabs);
-    const lecturesData = createArrayWithWeeks(parsedLectures);
     const tutorialsData = createArrayWithWeeks(parsedTutorial);
+    const labsData = createArrayWithWeeks(parsedLabs);
+    const lecturesData = createArrayWithWeeks(parsedLectures);
+    const seminarsData = createArrayWithWeeks(parsedSeminars);
+    const fieldworkPlacementData = createArrayWithWeeks(
+      parsedFieldworkPlacement
+    );
+    const otherData = createArrayWithWeeks(parsedOther);
+
+    const examAssessments = assessments.filter(
+      (assessment) => assessment.assessmentType === "exam"
+    );
+
+    const courseworkAssessments = assessments.filter(
+      (assessment) => assessment.assessmentType === "coursework"
+    );
 
     const examPrep = {
       weeks: [13, 14, 15],
-      weightage: parsedAssessmentWeightage,
+      weightage: parseInt(examAssessments[0]?.weightage || 0, 10),
     };
 
-    const courseworkPrep = [
-      {
-        deadline: parsedAssessmentDeadline,
-        weightage: parsedAssessmentWeightage,
-        studyHours: (privateStudyHours * parsedAssessmentWeightage) / 100,
+    const courseworkPrep = courseworkAssessments.map((coursework) => {
+      return {
+        deadline: parseInt(coursework.deadline || 0, 10),
+        weightage: parseInt(coursework.weightage || 0, 10),
+        studyHours:
+          (privateStudyHours * parseInt(coursework.weightage || 0, 10)) / 100,
         distributions: [],
-      },
-    ];
+      };
+    });
 
     const updatedData = {
       moduleCode,
@@ -80,9 +97,12 @@ const transformInputToDatabaseSchema = async (inputData) => {
       totalStudyHours,
       timetabledHours: parsedTimetabledHours,
       privateStudyHours,
-      labHours,
+      labs: labsData,
       lectures: lecturesData,
       tutorials: tutorialsData,
+      seminars: seminarsData,
+      fieldworkPlacement: fieldworkPlacementData,
+      other: otherData,
       examPrep,
       courseworkPrep,
     };
@@ -96,15 +116,9 @@ const transformInputToDatabaseSchema = async (inputData) => {
       };
     }
 
-    console.log("New data to save:", updatedData);
-
     const newDoc = new TransformedDataModel(updatedData);
 
-    console.log("New doc created:", newDoc);
-
     await newDoc.save();
-
-    console.log("New doc saved:", newDoc);
 
     return updatedData[moduleCode]; // Return the specific data updated/added
   } catch (error) {

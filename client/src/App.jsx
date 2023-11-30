@@ -1,88 +1,31 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
-import StudyHoursLineGraph from "./components/LineGraph/LineGraph";
 import InputForm from "./components/InputForm/InputForm";
+import ModuleSelection from "./components/Buttons/ModuleSelection";
+import StudyHoursLineGraph from "./components/LineGraph/LineGraph"; // Assuming the file path is correct
 
 function App() {
-  const [selectedModule, setSelectedModule] = useState("ELEC362");
-  const [selectedStudyStyle, setSelectedStudyStyle] = useState("balanced");
-  const [modules, setModules] = useState([]);
   const [moduleData, setModuleData] = useState(null);
-  const [shouldReRender, setShouldReRender] = useState(false);
-
-  useEffect(() => {
-    axios
-      .get("http://localhost:8000/getModules")
-      .then((response) => {
-        const data = response.data;
-        console.log("Fetched Modules:", data);
-        if (Array.isArray(data)) {
-          setModules(data);
-          if (data.length > 0) {
-            setSelectedModule(data[0].moduleCode);
-            console.log("Selected Module:", data[0].moduleCode);
-          }
-        } else {
-          console.error("Fetched data is not an array:", data);
-        }
-      })
-      .catch((err) => console.log(err));
-  }, []);
-  
-
-  useEffect(() => {
-    if (modules[selectedModule]) {
-      setModuleData(modules[selectedModule]);
-    }
-  }, [selectedStudyStyle, modules, selectedModule]);
-
-  useEffect(() => {
-    setShouldReRender((prev) => !prev);
-  }, [selectedModule, selectedStudyStyle]);
-
-  const handleModuleChange = (event) => {
-    const moduleCode = event.target.value;
-    const selectedModuleObject = modules.find(
-      (module) => module.moduleCode === moduleCode
-    );
-    setModuleData(selectedModuleObject);
-    setSelectedModule(moduleCode);
-  };
-
-  const handleStudyStyleChange = (event) => {
-    const style = event.target.value;
-    setSelectedStudyStyle(style);
-  };
+  const [selectedStudyStyle, setSelectedStudyStyle] = useState("balanced");
 
   return (
     <div className="app-container">
       <div className="header">
         <h1>SWEAT Project</h1>
-        <select value={selectedModule} onChange={handleModuleChange}>
-          <option value="">Select Module</option>
-          {modules.map((module) => (
-            <option key={module._id} value={module.moduleCode}>
-              {module.moduleCode}
-            </option>
-          ))}
-        </select>
-
-        <select value={selectedStudyStyle} onChange={handleStudyStyleChange}>
-          <option value="balanced">Balanced</option>
-          <option value="procrastinator">Procrastinator</option>
-          <option value="earlybird">Early Bird</option>
-        </select>
+        <ModuleSelection
+          setModuleData={setModuleData}
+          setSelectedStudyStyle={setSelectedStudyStyle}
+        />
       </div>
 
       <div className="line-graph">
         <StudyHoursLineGraph
-          key={shouldReRender}
           moduleData={moduleData}
           studyStyle={selectedStudyStyle}
         />
       </div>
+
       <div className="input-form">
         <InputForm />
       </div>

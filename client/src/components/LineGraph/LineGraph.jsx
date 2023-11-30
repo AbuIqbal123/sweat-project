@@ -8,115 +8,8 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
+import { distributeStudyHours, CustomTooltip } from "./functions";
 import "./LineGraph.css";
-
-// Function to distribute study hours based on different styles
-const distributeStudyHours = (studyHours, deadline, style) => {
-  // Maximum study hours per week
-  const maxHoursPerWeek = 20;
-
-  // If study hours fit within one week, distribute them accordingly
-  if (studyHours <= maxHoursPerWeek) {
-    const distribution = Array(16).fill(0);
-    distribution[deadline] = studyHours;
-    return distribution;
-  }
-
-  // If study hours exceed one week, distribute them based on the selected style
-  const numWeeks = Math.ceil(studyHours / maxHoursPerWeek);
-  const startWeek = deadline - numWeeks + 1;
-  const distribution = Array(16).fill(0);
-
-  if (style === "balanced") {
-    // Distribute hours evenly across weeks
-    const hoursPerWeek = Math.floor(studyHours / numWeeks);
-    const remainingHours = studyHours % numWeeks;
-
-    for (let i = 0; i < numWeeks; i++) {
-      distribution[startWeek + i] = hoursPerWeek;
-      if (i < remainingHours) {
-        distribution[startWeek + i] += 1;
-      }
-    }
-  } else if (style === "procrastinator") {
-    // Distribute hours in a procrastinator style
-    let distributedHours = 0;
-    for (let i = startWeek + numWeeks - 1; i >= startWeek; i--) {
-      const additionalHours = Math.min(
-        maxHoursPerWeek,
-        studyHours - distributedHours
-      );
-      distribution[i] += additionalHours;
-      distributedHours += additionalHours;
-    }
-  } else if (style === "earlybird") {
-    // Distribute hours in an early bird style
-    let distributedHours = 0;
-    for (let i = startWeek; i < startWeek + numWeeks; i++) {
-      const additionalHours = Math.min(
-        maxHoursPerWeek,
-        studyHours - distributedHours
-      );
-      distribution[i] += additionalHours;
-      distributedHours += additionalHours;
-    }
-  }
-  return distribution;
-};
-
-const CustomTooltip = ({ active, payload, label, totalStudyHours }) => {
-  if (active && payload && payload.length) {
-    const dataKeys = payload.map((data) => data.dataKey);
-    const colors = {
-      Labs: "#8884d8",
-      Lectures: "#82ca9d",
-      Tutorials: "#ffc658",
-      "Exam Prep": "#000",
-      "Coursework Prep": "#ff7300",
-    };
-
-    return (
-      <div
-        className="custom-tooltip"
-        style={{
-          backgroundColor: "white",
-          padding: "15px",
-          border: "1px solid #ccc",
-          fontSize: "14px",
-        }}
-      >
-        <p
-          className="label"
-          style={{ marginBottom: "8px", fontSize: "16px" }}
-        >{`Week ${label}`}</p>
-        {payload.map((data) => (
-          <p
-            key={data.dataKey}
-            className="data-item"
-            style={{
-              color: colors[data.dataKey],
-              margin: "8px 0",
-              fontSize: "14px",
-            }}
-          >
-            {`${data.dataKey}: ${data.value} hours`}
-          </p>
-        ))}
-        <p
-          className="total-study-hours"
-          style={{
-            marginTop: "12px",
-            borderTop: "1px solid #ccc",
-            paddingTop: "8px",
-            fontSize: "14px",
-          }}
-        >{`Total Study Hours: ${totalStudyHours[label]} hours`}</p>
-      </div>
-    );
-  }
-
-  return null;
-};
 
 const StudyHoursLineGraph = ({ moduleData, studyStyle }) => {
   // Return placeholder if no data is available
@@ -132,17 +25,63 @@ const StudyHoursLineGraph = ({ moduleData, studyStyle }) => {
   const weeks = Array.from({ length: 16 }, (_, i) => i);
 
   // Calculate hours for different study components
-  const labHours = weeks.map((week) =>
-    moduleData.labHours.some((lab) => lab.week === week) ? 2 : 0
-  );
+  const labHours = weeks.map((week) => {
+    if (moduleData && moduleData.labHours) {
+      const weekData = moduleData.labHours.find((lab) => lab.week === week);
+      return weekData ? weekData.hours : 0;
+    }
+    return 0;
+  });
 
-  const lectureHours = weeks.map((week) =>
-    moduleData.lectures.some((lecture) => lecture.week === week) ? 2 : 0
-  );
+  const lectureHours = weeks.map((week) => {
+    if (moduleData && moduleData.lectures) {
+      const weekData = moduleData.lectures.find(
+        (lecture) => lecture.week === week
+      );
+      return weekData ? weekData.hours : 0;
+    }
+    return 0;
+  });
 
-  const tutorialHours = weeks.map((week) =>
-    moduleData.tutorials.some((tutorial) => tutorial.week === week) ? 1 : 0
-  );
+  const tutorialHours = weeks.map((week) => {
+    if (moduleData && moduleData.tutorials) {
+      const weekData = moduleData.tutorials.find(
+        (tutorial) => tutorial.week === week
+      );
+      return weekData ? weekData.hours : 0;
+    }
+    return 0;
+  });
+
+  const seminarHours = weeks.map((week) => {
+    if (moduleData && moduleData.seminars) {
+      const weekData = moduleData.seminars.find(
+        (seminar) => seminar.week === week
+      );
+      return weekData ? weekData.hours : 0;
+    }
+    return 0;
+  });
+
+  const fieldworkHours = weeks.map((week) => {
+    if (moduleData && moduleData.fieldworkPlacement) {
+      const weekData = moduleData.fieldworkPlacement.find(
+        (fieldwork) => fieldwork.week === week
+      );
+      return weekData ? weekData.hours : 0;
+    }
+    return 0;
+  });
+
+  const otherHours = weeks.map((week) => {
+    if (moduleData && moduleData.other) {
+      const weekData = moduleData.other.find((other) => other.week === week);
+      return weekData ? weekData.hours : 0;
+    }
+    return 0;
+  });
+
+  const sum = (arr) => arr.reduce((acc, val) => acc + val, 0);
 
   const examPrepHours = weeks.map((week) =>
     moduleData.examPrep.weeks.includes(week)
@@ -203,7 +142,7 @@ const StudyHoursLineGraph = ({ moduleData, studyStyle }) => {
       )
   );
 
-  // Prepare final data for the line chart
+  // Prepare final data for the line char
   const data = weeks.map((week) => {
     const courseworkData = courseworkPrepData.find(
       (data) => data.week === week
@@ -217,10 +156,15 @@ const StudyHoursLineGraph = ({ moduleData, studyStyle }) => {
       "Exam Prep": examPrepHours[week],
       "Coursework Prep": courseworkData ? courseworkData["Coursework Prep"] : 0,
       "Total Study Hours": totalStudyHours[week], // Include total study hours
+      Seminars: seminarHours[week], // Include Seminars
+      Fieldwork: fieldworkHours[week], // Include Fieldwork
+      Other: otherHours[week], // Include Other
     };
 
     return dataObj;
   });
+
+  console.log("Fieldwork Hours Array:", fieldworkHours);
 
   // Return the study hours line graph
   return (
@@ -233,7 +177,6 @@ const StudyHoursLineGraph = ({ moduleData, studyStyle }) => {
           data={data}
           margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
         >
-          {/* Chart components */}
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
             dataKey="week"
@@ -248,7 +191,7 @@ const StudyHoursLineGraph = ({ moduleData, studyStyle }) => {
             content={<CustomTooltip totalStudyHours={totalStudyHours} />}
           />
           <Legend wrapperStyle={{ marginTop: "30px" }} />
-          {/* Lines for different study components */}
+
           <Line
             type="monotone"
             dataKey="Labs"
@@ -259,6 +202,17 @@ const StudyHoursLineGraph = ({ moduleData, studyStyle }) => {
           <Line type="monotone" dataKey="Tutorials" stroke="#ffc658" />
           <Line type="monotone" dataKey="Exam Prep" stroke="#000" />
           <Line type="monotone" dataKey="Coursework Prep" stroke="#ff7300" />
+
+          {/* New lines for study components */}
+          {sum(seminarHours) !== 0 && (
+            <Line type="monotone" dataKey="Seminars" stroke="#ff00ff" />
+          )}
+          {sum(fieldworkHours) !== 0 && (
+            <Line type="monotone" dataKey="Fieldwork" stroke="#00ff00" />
+          )}
+          {sum(otherHours) !== 0 && (
+            <Line type="monotone" dataKey="Other" stroke="#ff0000" />
+          )}
         </LineChart>
       </div>
     </div>

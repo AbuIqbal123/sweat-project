@@ -195,7 +195,9 @@ const InputForm = () => {
             },
           ]
         );
-        console.log("Response:", response.data);
+        if (response.status === 200) {
+          window.location.reload();
+        }
       } catch (error) {
         if (error.response) {
           setError("Failed to save data. Please try again later.");
