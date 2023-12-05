@@ -9,21 +9,25 @@ const moduleSchema = new mongoose.Schema({
   labHours: [{ week: Number, hours: Number }],
   lectures: [{ week: Number, hours: Number }],
   tutorials: [{ week: Number, hours: Number }],
-  seminars: [{ week: Number, hours: Number }], // Add seminars field
-  fieldworkPlacement: [{ week: Number, hours: Number }], // Add fieldworkPlacement field
-  other: [{ week: Number, hours: Number }], // Add other field
+  seminars: [{ week: Number, hours: Number }],
+  fieldworkPlacement: [{ week: Number, hours: Number }],
+  other: [{ week: Number, hours: Number }],
   examPrep: {
     weeks: [Number],
     weightage: Number,
   },
-  courseworkPrep: [
+  coursework: [
     {
-      deadline: Number,
-      weightage: Number,
       studyHours: Number,
-      distribution: [],
+      weightage: Number,
+      deadline: Number,
     },
   ],
+  courseworkPrep: {
+    balanced: [{ week: Number, hours: Number }],
+    procrastinator: [{ week: Number, hours: Number }],
+    earlybird: [{ week: Number, hours: Number }],
+  },
 });
 
 const ModuleModel = mongoose.model("modules", moduleSchema);

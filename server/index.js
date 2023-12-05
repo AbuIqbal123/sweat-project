@@ -23,14 +23,11 @@ app.use(cors({ origin: true, credentials: true })); // CORS middleware
 app.use(express.json()); // Body parser middleware for handling JSON
 
 // routes
-const testRoutes = require("./routes/test");
-app.use("/", testRoutes); // Use test routes
 
 const ModuleModel = require("./models/moduleSchema");
 app.get("/getModules", (req, res) => {
   ModuleModel.find()
     .then((modules) => {
-      console.log("Fetched Modules:", modules); // Debug log for fetched modules
       res.json(modules);
     })
     .catch((err) => {

@@ -39,7 +39,7 @@ const ModuleSelection = ({ setModuleData, setSelectedStudyStyle }) => {
     } else {
       console.log("Module not found or modules list is empty.");
     }
-  }, [selectedModule, modules, setModuleData]);
+  }, [selectedModule, selectedStudyStyle, modules, setModuleData, setModules]);
 
   const handleModuleChange = (event) => {
     const moduleCode = event.target.value;

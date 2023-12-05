@@ -1,13 +1,11 @@
 const TransformedDataModel = require("../models/moduleSchema");
-const ENV_ID = process.env.ENV_ID;
+const { distributeStudyHours } = require("./distributeFunction");
 
 const transformInputToDatabaseSchema = async (inputData) => {
   try {
     if (!Array.isArray(inputData) || inputData.length === 0) {
       throw new Error("Invalid input data");
     }
-
-    console.log("Input Data:", JSON.stringify(inputData, null, 2));
 
     const input = inputData[0];
     const {
@@ -30,8 +28,6 @@ const transformInputToDatabaseSchema = async (inputData) => {
     const parsedTutorial = parseInt(tutorial, 10);
     const parsedLabs = parseInt(labs, 10);
     const parsedOther = parseInt(other, 10);
-    const parsedAssessmentDeadline = parseInt(assessments[0].deadline, 10);
-    const parsedAssessmentWeightage = parseInt(assessments[0].weightage, 10);
     const parsedFieldworkPlacement = parseInt(fieldworkPlacement, 10);
 
     if (
@@ -42,8 +38,6 @@ const transformInputToDatabaseSchema = async (inputData) => {
       isNaN(parsedTutorial) ||
       isNaN(parsedLabs) ||
       isNaN(parsedOther) ||
-      isNaN(parsedAssessmentDeadline) ||
-      isNaN(parsedAssessmentWeightage) ||
       isNaN(parsedFieldworkPlacement)
     ) {
       throw new Error("Invalid numeric value in input");
@@ -72,24 +66,65 @@ const transformInputToDatabaseSchema = async (inputData) => {
       (assessment) => assessment.assessmentType === "exam"
     );
 
-    const courseworkAssessments = assessments.filter(
-      (assessment) => assessment.assessmentType === "coursework"
-    );
+    const coursework = assessments
+      .filter((assessment) => assessment.assessmentType === "coursework")
+      .map((assessment) => {
+        const weightage = parseInt(assessment.weightage, 10);
+        const deadline = parseInt(assessment.deadline, 10);
+        const studyHours = (weightage / 100) * privateStudyHours;
+
+        return {
+          weightage,
+          deadline,
+          assessmentType: assessment.assessmentType,
+          distribution: [],
+          studyHours,
+        };
+      });
 
     const examPrep = {
       weeks: [13, 14, 15],
       weightage: parseInt(examAssessments[0]?.weightage || 0, 10),
     };
+    const courseworkPrep = {
+      balanced: createArrayWithWeeks(0), // Replace 0 with your initial value if necessary
+      procrastinator: createArrayWithWeeks(0), // Replace 0 with your initial value if necessary
+      earlybird: createArrayWithWeeks(0), // Replace 0 with your initial value if necessary
+    };
 
-    const courseworkPrep = courseworkAssessments.map((coursework) => {
-      return {
-        deadline: parseInt(coursework.deadline || 0, 10),
-        weightage: parseInt(coursework.weightage || 0, 10),
-        studyHours:
-          (privateStudyHours * parseInt(coursework.weightage || 0, 10)) / 100,
-        distributions: [],
-      };
+    coursework.forEach((courseworkItem) => {
+      const { studyHours, deadline } = courseworkItem;
+
+      const balancedDistribution = distributeStudyHours(
+        studyHours,
+        deadline,
+        "balanced"
+      );
+      const procrastinatorDistribution = distributeStudyHours(
+        studyHours,
+        deadline,
+        "procrastinator"
+      );
+      const earlybirdDistribution = distributeStudyHours(
+        studyHours,
+        deadline,
+        "earlybird"
+      );
+
+      balancedDistribution.forEach((weekData, index) => {
+        courseworkPrep.balanced[index].hours += weekData.hours;
+      });
+
+      procrastinatorDistribution.forEach((weekData, index) => {
+        courseworkPrep.procrastinator[index].hours += weekData.hours;
+      });
+
+      earlybirdDistribution.forEach((weekData, index) => {
+        courseworkPrep.earlybird[index].hours += weekData.hours;
+      });
     });
+
+    console.log("coursework prep", courseworkPrep);
 
     const updatedData = {
       moduleCode,
@@ -104,23 +139,14 @@ const transformInputToDatabaseSchema = async (inputData) => {
       fieldworkPlacement: fieldworkPlacementData,
       other: otherData,
       examPrep,
+      coursework,
       courseworkPrep,
     };
 
-    const newData = {};
-
-    if (updatedData.examPrep) {
-      newData.examPrep = {
-        weeks: updatedData.examPrep.weeks,
-        weightage: updatedData.examPrep.weightage,
-      };
-    }
-
     const newDoc = new TransformedDataModel(updatedData);
-
     await newDoc.save();
 
-    return updatedData[moduleCode]; // Return the specific data updated/added
+    return updatedData[moduleCode];
   } catch (error) {
     console.error("Error updating data in DB:", error);
     throw error;

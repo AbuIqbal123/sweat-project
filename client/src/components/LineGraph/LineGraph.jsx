@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   LineChart,
   Line,
@@ -8,11 +8,10 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
-import { distributeStudyHours, CustomTooltip } from "./functions";
+import { CustomTooltip } from "./functions";
 import "./LineGraph.css";
 
 const StudyHoursLineGraph = ({ moduleData, studyStyle }) => {
-  // Return placeholder if no data is available
   if (!moduleData) {
     return (
       <div className="study-hours-line-graph-container">
@@ -23,6 +22,7 @@ const StudyHoursLineGraph = ({ moduleData, studyStyle }) => {
 
   // Array representing weeks
   const weeks = Array.from({ length: 16 }, (_, i) => i);
+  const selectedCourseworkPrep = moduleData.courseworkPrep[studyStyle];
 
   // Calculate hours for different study components
   const labHours = weeks.map((week) => {
@@ -81,6 +81,16 @@ const StudyHoursLineGraph = ({ moduleData, studyStyle }) => {
     return 0;
   });
 
+  const courseworkPrepHours = weeks.map((week) => {
+    if (selectedCourseworkPrep) {
+      const weekData = selectedCourseworkPrep.find(
+        (data) => data.week === week
+      );
+      return weekData ? weekData.hours : 0;
+    }
+    return 0;
+  });
+
   const sum = (arr) => arr.reduce((acc, val) => acc + val, 0);
 
   const examPrepHours = weeks.map((week) =>
@@ -89,64 +99,20 @@ const StudyHoursLineGraph = ({ moduleData, studyStyle }) => {
       : 0
   );
 
-  // Calculate coursework preparation hours distribution
-  const courseworkPrepHours = weeks.map((week) => {
-    const coursework = moduleData.courseworkPrep.find(
-      (coursework) => coursework.deadline === week
-    );
-
-    if (coursework && coursework.distribution.length === 0) {
-      coursework.distribution = distributeStudyHours(
-        coursework.studyHours,
-        coursework.deadline,
-        studyStyle
-      );
-      return coursework.distribution;
-    }
-
-    // Return array filled with zeros if no coursework or distribution available
-    return coursework ? coursework.distribution : Array(16).fill(0);
-  });
-
-  // Merge coursework prep distributions into a single distribution
-  const mergedCourseworkPrepDistribution = courseworkPrepHours.reduce(
-    (acc, distribution) => {
-      for (let i = 0; i < distribution.length; i++) {
-        acc[i] = (acc[i] || 0) + distribution[i];
-      }
-      return acc;
-    },
-    Array(16).fill(0)
-  );
-
-  // Prepare data for coursework prep for line chart
-  const courseworkPrepData = mergedCourseworkPrepDistribution.map(
-    (hours, index) => {
-      return {
-        week: index,
-        "Coursework Prep": hours,
-      };
-    }
-  );
-
   // Calculate total study hours for each week
-  const totalStudyHours = weeks.map(
-    (week) =>
+  const totalStudyHours = weeks.map((week) => {
+    return (
       labHours[week] +
       lectureHours[week] +
       tutorialHours[week] +
       examPrepHours[week] +
-      courseworkPrepHours.reduce(
-        (acc, distribution) => acc + (distribution[week] || 0),
-        0
-      )
-  );
-
-  // Prepare final data for the line char
-  const data = weeks.map((week) => {
-    const courseworkData = courseworkPrepData.find(
-      (data) => data.week === week
+      courseworkPrepHours[week]
     );
+  });
+
+  // Prepare final data for the line chart
+  const data = weeks.map((week) => {
+    const selectedCourseworkPrep = moduleData.courseworkPrep[studyStyle];
 
     const dataObj = {
       week,
@@ -154,7 +120,7 @@ const StudyHoursLineGraph = ({ moduleData, studyStyle }) => {
       Lectures: lectureHours[week],
       Tutorials: tutorialHours[week],
       "Exam Prep": examPrepHours[week],
-      "Coursework Prep": courseworkData ? courseworkData["Coursework Prep"] : 0,
+      "Coursework Prep": courseworkPrepHours[week],
       "Total Study Hours": totalStudyHours[week], // Include total study hours
       Seminars: seminarHours[week], // Include Seminars
       Fieldwork: fieldworkHours[week], // Include Fieldwork
@@ -163,8 +129,6 @@ const StudyHoursLineGraph = ({ moduleData, studyStyle }) => {
 
     return dataObj;
   });
-
-  console.log("Fieldwork Hours Array:", fieldworkHours);
 
   // Return the study hours line graph
   return (
