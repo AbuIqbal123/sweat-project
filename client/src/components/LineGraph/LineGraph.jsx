@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   LineChart,
   Line,
@@ -9,9 +9,14 @@ import {
   Legend,
 } from "recharts";
 import { CustomTooltip } from "./functions";
+import EditButton from "./EditButton";
+import EditModal from "./EditModal";
 import "./LineGraph.css";
 
 const StudyHoursLineGraph = ({ moduleData, studyStyle }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editData, setEditData] = useState({});
+
   if (!moduleData) {
     return (
       <div className="study-hours-line-graph-container">
@@ -130,6 +135,18 @@ const StudyHoursLineGraph = ({ moduleData, studyStyle }) => {
     return dataObj;
   });
 
+  const handleEditClick = (dataToEdit) => {
+    setEditData(dataToEdit); // Set the data to be edited
+    setIsModalOpen(true); // Open the modal
+  };
+
+  const onSave = (updatedData) => {
+    // Here you would typically send updatedData to your backend server
+    // For demonstration, we're just updating the local state
+    setEditData(updatedData);
+    setIsModalOpen(false); // Close the modal after saving
+  };
+
   // Return the study hours line graph
   return (
     <div className="study-hours-line-graph-container">
@@ -179,6 +196,15 @@ const StudyHoursLineGraph = ({ moduleData, studyStyle }) => {
           )}
         </LineChart>
       </div>
+      <EditButton onEditClick={() => setIsModalOpen(true)} />
+
+      {isModalOpen && (
+        <EditModal
+          onClose={() => setIsModalOpen(false)}
+          data={editData}
+          onSave={onSave}
+        />
+      )}
     </div>
   );
 };
