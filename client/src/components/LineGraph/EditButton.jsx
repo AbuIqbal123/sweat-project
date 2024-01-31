@@ -1,12 +1,13 @@
+// EditButton.jsx
 import React from "react";
-import "./EditButton.css";
+import "./EditButton.css"; // Assuming this file contains the appropriate styles
 
-const EditButton = ({ onEditClick }) => {
+function EditButton({ onClick }) {
   return (
-    <button className="edit-button" onClick={onEditClick}>
-      Edit
+    <button onClick={onClick} className="edit-button">
+      Edit Module Components
     </button>
   );
-};
+}
 
 export default EditButton;
