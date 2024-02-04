@@ -67,16 +67,17 @@ const transformInputToDatabaseSchema = async (inputData) => {
     );
 
     const coursework = assessments
-      .filter((assessment) => assessment.assessmentType === "coursework")
+      .filter((assessment) => assessment.assessmentType === "coursework" || assessment.assessmentType === "class test")
       .map((assessment) => {
+        const assessmentType = assessment.assessmentType;
         const weightage = parseInt(assessment.weightage, 10);
         const deadline = parseInt(assessment.deadline, 10);
         const studyHours = (weightage / 100) * privateStudyHours;
 
         return {
+          assessmentType,
           weightage,
           deadline,
-          assessmentType: assessment.assessmentType,
           distribution: [],
           studyHours,
         };

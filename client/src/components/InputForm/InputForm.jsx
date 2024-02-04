@@ -16,6 +16,7 @@ const InputForm = () => {
   const [error, setError] = useState("");
   const [assessments, setAssessments] = useState([
     {
+      assessmentType: "",
       deadline: "",
       weightage: "",
       distribution: [],

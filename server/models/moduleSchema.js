@@ -18,6 +18,7 @@ const moduleSchema = new mongoose.Schema({
   },
   coursework: [
     {
+      assessmentType: String,
       studyHours: Number,
       weightage: Number,
       deadline: Number,

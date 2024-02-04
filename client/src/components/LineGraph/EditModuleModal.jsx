@@ -1,105 +1,188 @@
-// EditModuleModal.jsx
-import React from "react";
-import "./EditModuleModal.css"; // Make sure to create this CSS file
+import React, { useEffect, useState } from "react";
 
-function EditModuleModal({ isOpen, onClose }) {
+function EditModuleModal({ isOpen, onClose, moduleData }) {
+  console.log("moduleData", moduleData); 
+  const [formFields, setFormFields] = useState({
+    moduleCode: "",
+    moduleCredit: 0,
+    totalStudyHours: 0,
+    timetabledHours: 0,
+    privateStudyHours: 0,
+    lecturesTotalHours: 0,
+    seminarsTotalHours: 0,
+    tutorialsTotalHours: 0,
+    fieldworkPlacementTotalHours: 0,
+    otherTotalHours: 0,
+    assessments: [],
+  });
+
+  useEffect(() => {
+    if (moduleData) {
+      const calculateTotalHours = (items) =>
+        Math.round(items.reduce((total, item) => total + item.hours, 0));
+
+      setFormFields({
+        moduleCode: moduleData.moduleCode || "",
+        moduleCredit: moduleData.moduleCredit || 0,
+        totalStudyHours: moduleData.totalStudyHours || 0,
+        timetabledHours: moduleData.timetabledHours || 0,
+        privateStudyHours: moduleData.privateStudyHours || 0,
+        lecturesTotalHours: calculateTotalHours(moduleData.lectures),
+        seminarsTotalHours: calculateTotalHours(moduleData.seminars),
+        tutorialsTotalHours: calculateTotalHours(moduleData.tutorials),
+        fieldworkPlacementTotalHours: calculateTotalHours(
+          moduleData.fieldworkPlacement
+        ),
+        otherTotalHours: calculateTotalHours(moduleData.other),
+        assessments: moduleData.coursework || [],
+      });
+    }
+  }, [moduleData]);
+
+  const handleAssessmentChange = (index, field, value) => {
+    const updatedAssessments = formFields.assessments.map((assessment, i) =>
+      i === index ? { ...assessment, [field]: value } : assessment
+    );
+    setFormFields({ ...formFields, assessments: updatedAssessments });
+  };
+
+  const handleDeleteAssessment = (index) => {
+    const filteredAssessments = formFields.assessments.filter(
+      (_, i) => i !== index
+    );
+    setFormFields({ ...formFields, assessments: filteredAssessments });
+  };
+
   if (!isOpen) return null;
 
   return (
-    <div className="modal">
-      <div className="modal-content">
-        <span className="close-button" onClick={onClose}>
-          &times;
-        </span>
-        <h2>Module Information</h2>
-        <div className="form-section field-group">
-          <div>
-            <label htmlFor="moduleCode">Module Code:</label>
+    <div>
+      <h2>Edit Module Data</h2>
+      <form onSubmit={(e) => e.preventDefault()}>
+        <div>
+          <label>
+            Module Code:
+            <input type="text" value={formFields.moduleCode} readOnly />
+          </label>
+        </div>
+        <div>
+          <label>
+            Module Credits:
+            <input type="number" value={formFields.moduleCredit} readOnly />
+          </label>
+        </div>
+        <div>
+          <label>
+            Total Study Hours:
+            <input type="number" value={formFields.totalStudyHours} readOnly />
+          </label>
+        </div>
+        <div>
+          <label>
+            Timetabled Hours:
+            <input type="number" value={formFields.timetabledHours} readOnly />
+          </label>
+        </div>
+        <div>
+          <label>
+            Private Study Hours:
             <input
-              type="text"
-              id="moduleCode"
-              placeholder="Enter Module Code"
+              type="number"
+              value={formFields.privateStudyHours}
+              readOnly
             />
-          </div>
-          <div>
-            <label htmlFor="moduleCredit">Module Credit:</label>
+          </label>
+        </div>
+        <div>
+          <label>
+            Lectures Total Hours:
             <input
-              type="text"
-              id="moduleCredit"
-              placeholder="Enter Module Credit"
+              type="number"
+              value={formFields.lecturesTotalHours}
+              readOnly
             />
-          </div>
-          <div>
-            <label htmlFor="timetabledHours">Timetabled Hours:</label>
+          </label>
+        </div>
+        <div>
+          <label>
+            Seminars Total Hours:
             <input
-              type="text"
-              id="timetabledHours"
-              placeholder="Enter Timetabled Hours"
+              type="number"
+              value={formFields.seminarsTotalHours}
+              readOnly
             />
-          </div>
+          </label>
+        </div>
+        <div>
+          <label>
+            Tutorials Total Hours:
+            <input
+              type="number"
+              value={formFields.tutorialsTotalHours}
+              readOnly
+            />
+          </label>
+        </div>
+        <div>
+          <label>
+            Fieldwork Placement Total Hours:
+            <input
+              type="number"
+              value={formFields.fieldworkPlacementTotalHours}
+              readOnly
+            />
+          </label>
+        </div>
+        <div>
+          <label>
+            Other Total Hours:
+            <input type="number" value={formFields.otherTotalHours} readOnly />
+          </label>
         </div>
 
-        <h2>Teaching Schedule</h2>
-        <div className="form-section field-group">
-          {/* ... Teaching Schedule fields ... */}
-          <div className="field">
-            <label htmlFor="lectures">Lectures</label>
-            <input type="number" id="lectures" placeholder="Enter number" />
-          </div>
-          <div className="field">
-            <label htmlFor="seminars">Seminars</label>
-            <input type="number" id="seminars" placeholder="Enter number" />
-          </div>
-          <div className="field">
-            <label htmlFor="tutorials">Tutorials</label>
-            <input type="number" id="tutorials" placeholder="Enter number" />
-          </div>
-          <div className="field">
-            <label htmlFor="labs">Labs</label>
-            <input type="number" id="labs" placeholder="Enter number" />
-          </div>
-          <div className="field">
-            <label htmlFor="fieldwork">Fieldwork Placement</label>
-            <input type="number" id="fieldwork" placeholder="Enter number" />
-          </div>
-          <div className="field">
-            <label htmlFor="other">Other</label>
-            <input type="text" id="other" placeholder="Enter details" />
-          </div>
-        </div>
-
-        <h2>Assessments</h2>
-        <div className="form-section">
-          <div className="field-group">
-            <div>
-              <label htmlFor="assessmentType">Assessment Type</label>
-              <select id="assessmentType">
-                <option value="exam">Exam</option>
-                <option value="coursework">Coursework</option>
-                <option value="classtest">Class Test</option>
-                {/* Add other options here */}
-              </select>
-            </div>
-            <div>
-              <label htmlFor="weightage">Weightage (%)</label>
+        <h3>Assessments</h3>
+        {formFields.assessments.map((assessment, index) => (
+          <div key={index}>
+            <label>
+              Assessment Type:
+              <input
+                type="text"
+                value={assessment.assessmentType}
+                onChange={(e) =>
+                  handleAssessmentChange(index, "type", e.target.value)
+                }
+              />
+            </label>
+            <label>
+              Weightage (%):
               <input
                 type="number"
-                id="weightage"
-                placeholder="Enter Weightage"
+                value={assessment.weightage}
+                onChange={(e) =>
+                  handleAssessmentChange(index, "weightage", e.target.value)
+                }
               />
-            </div>
-            <div>
-              <label htmlFor="deadline">Deadline (Week)</label>
-              <input type="number" id="deadline" placeholder="Enter Deadline" />
-            </div>
+            </label>
+            <label>
+              Deadline:
+              <input
+                type="text"
+                value={assessment.deadline}
+                onChange={(e) =>
+                  handleAssessmentChange(index, "deadline", e.target.value)
+                }
+              />
+            </label>
+            <button type="button" onClick={() => handleDeleteAssessment(index)}>
+              Delete
+            </button>
           </div>
-        </div>
+        ))}
 
-        <div className="form-actions">
-          <button className="add-assessment">Add Assessment</button>
-          <button className="save-data">Save All Data</button>
-        </div>
-      </div>
+        <button type="button" onClick={onClose}>
+          Close
+        </button>
+      </form>
     </div>
   );
 }

@@ -190,6 +190,7 @@ const StudyHoursLineGraph = ({ moduleData, studyStyle }) => {
         <EditModuleModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
+          moduleData={moduleData}
         />
       </div>
     </div>

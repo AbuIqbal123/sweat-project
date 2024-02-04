@@ -44,14 +44,12 @@ const ModuleSelection = ({ setModuleData, setSelectedStudyStyle }) => {
   const handleModuleChange = (event) => {
     const moduleCode = event.target.value;
     setSelectedModule(moduleCode);
-    console.log("Selected Module:", moduleCode);
   };
 
   const handleStudyStyleChange = (event) => {
     const style = event.target.value;
     setSelectedStudyStyle(style);
     setSelectedStudyStyleLocal(style); // Set local state for selectedStudyStyle
-    console.log("Selected Study Style:", style);
   };
 
   return (
