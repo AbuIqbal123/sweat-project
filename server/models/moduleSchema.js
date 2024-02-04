@@ -6,7 +6,7 @@ const moduleSchema = new mongoose.Schema({
   totalStudyHours: Number,
   timetabledHours: Number,
   privateStudyHours: Number,
-  labHours: [{ week: Number, hours: Number }],
+  labs: [{ week: Number, hours: Number }],
   lectures: [{ week: Number, hours: Number }],
   tutorials: [{ week: Number, hours: Number }],
   seminars: [{ week: Number, hours: Number }],

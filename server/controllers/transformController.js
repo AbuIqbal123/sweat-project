@@ -55,6 +55,7 @@ const transformInputToDatabaseSchema = async (inputData) => {
 
     const tutorialsData = createArrayWithWeeks(parsedTutorial);
     const labsData = createArrayWithWeeks(parsedLabs);
+    console.log("labsData",labsData);
     const lecturesData = createArrayWithWeeks(parsedLectures);
     const seminarsData = createArrayWithWeeks(parsedSeminars);
     const fieldworkPlacementData = createArrayWithWeeks(
@@ -124,8 +125,6 @@ const transformInputToDatabaseSchema = async (inputData) => {
         courseworkPrep.earlybird[index].hours += weekData.hours;
       });
     });
-
-    console.log("coursework prep", courseworkPrep);
 
     const updatedData = {
       moduleCode,

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
+import "./EditModuleModal.css";
 
 function EditModuleModal({ isOpen, onClose, moduleData }) {
-  console.log("moduleData", moduleData); 
+  console.log("module data", moduleData);
   const [formFields, setFormFields] = useState({
     moduleCode: "",
     moduleCredit: 0,
@@ -11,17 +12,45 @@ function EditModuleModal({ isOpen, onClose, moduleData }) {
     lecturesTotalHours: 0,
     seminarsTotalHours: 0,
     tutorialsTotalHours: 0,
+    labsTotalHours: 0,
     fieldworkPlacementTotalHours: 0,
     otherTotalHours: 0,
     assessments: [],
   });
 
+  const assessmentTypes = ["Exam", "Coursework"];
+
   useEffect(() => {
-    if (moduleData) {
+    if (moduleData && moduleData.coursework) {
       const calculateTotalHours = (items) =>
         Math.round(items.reduce((total, item) => total + item.hours, 0));
 
-      setFormFields({
+        const mapAssessmentTypeToOption = (type) => {
+          // Check if type is undefined or null before proceeding
+          if (!type) {
+            return "Exam"; // Return a default value or handle this scenario as needed
+          }
+        
+          switch (type.toLowerCase()) {
+            case "exam":
+              return "Exam";
+            case "coursework":
+              return "Coursework";
+            default:
+              return "Exam"; // Default case if type is unrecognized
+          }
+        };
+        
+
+      const initializedAssessments = moduleData.coursework.map(
+        (assessment) => ({
+          ...assessment,
+          type: mapAssessmentTypeToOption(assessment.assessmentType),
+        })
+      );
+
+      setFormFields((prevState) => ({
+        ...prevState,
         moduleCode: moduleData.moduleCode || "",
         moduleCredit: moduleData.moduleCredit || 0,
         totalStudyHours: moduleData.totalStudyHours || 0,
@@ -30,14 +59,20 @@ function EditModuleModal({ isOpen, onClose, moduleData }) {
         lecturesTotalHours: calculateTotalHours(moduleData.lectures),
         seminarsTotalHours: calculateTotalHours(moduleData.seminars),
         tutorialsTotalHours: calculateTotalHours(moduleData.tutorials),
+        labsTotalHours: calculateTotalHours(moduleData.labs),
         fieldworkPlacementTotalHours: calculateTotalHours(
           moduleData.fieldworkPlacement
         ),
         otherTotalHours: calculateTotalHours(moduleData.other),
-        assessments: moduleData.coursework || [],
-      });
+        assessments: initializedAssessments,
+      }));
     }
   }, [moduleData]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormFields({ ...formFields, [name]: value });
+  };
 
   const handleAssessmentChange = (index, field, value) => {
     const updatedAssessments = formFields.assessments.map((assessment, i) =>
@@ -53,135 +88,188 @@ function EditModuleModal({ isOpen, onClose, moduleData }) {
     setFormFields({ ...formFields, assessments: filteredAssessments });
   };
 
+  const handleAddAssessment = () => {
+    const newAssessment = {
+      type: "Exam", // Default type, can be changed as needed
+      weightage: 0,
+      deadline: "",
+    };
+    setFormFields({
+      ...formFields,
+      assessments: [...formFields.assessments, newAssessment],
+    });
+  };
+
   if (!isOpen) return null;
 
   return (
-    <div>
-      <h2>Edit Module Data</h2>
-      <form onSubmit={(e) => e.preventDefault()}>
-        <div>
+    <div className="edit-module-modal">
+      <h2 className="modal-title">Edit Module Data</h2>
+      <form className="modal-form" onSubmit={(e) => e.preventDefault()}>
+        <div className="form-row">
           <label>
             Module Code:
-            <input type="text" value={formFields.moduleCode} readOnly />
+            <input
+              className="input-field"
+              type="text"
+              name="moduleCode"
+              value={formFields.moduleCode}
+              onChange={handleInputChange}
+            />
           </label>
-        </div>
-        <div>
           <label>
-            Module Credits:
-            <input type="number" value={formFields.moduleCredit} readOnly />
+            Module Credit:
+            <input
+              className="input-field"
+              type="number"
+              name="moduleCredit"
+              value={formFields.moduleCredit}
+              onChange={handleInputChange}
+            />
           </label>
-        </div>
-        <div>
-          <label>
-            Total Study Hours:
-            <input type="number" value={formFields.totalStudyHours} readOnly />
-          </label>
-        </div>
-        <div>
           <label>
             Timetabled Hours:
-            <input type="number" value={formFields.timetabledHours} readOnly />
-          </label>
-        </div>
-        <div>
-          <label>
-            Private Study Hours:
             <input
+              className="input-field"
               type="number"
-              value={formFields.privateStudyHours}
-              readOnly
+              name="timetabledHours"
+              value={formFields.timetabledHours}
+              onChange={handleInputChange}
             />
-          </label>
-        </div>
-        <div>
-          <label>
-            Lectures Total Hours:
-            <input
-              type="number"
-              value={formFields.lecturesTotalHours}
-              readOnly
-            />
-          </label>
-        </div>
-        <div>
-          <label>
-            Seminars Total Hours:
-            <input
-              type="number"
-              value={formFields.seminarsTotalHours}
-              readOnly
-            />
-          </label>
-        </div>
-        <div>
-          <label>
-            Tutorials Total Hours:
-            <input
-              type="number"
-              value={formFields.tutorialsTotalHours}
-              readOnly
-            />
-          </label>
-        </div>
-        <div>
-          <label>
-            Fieldwork Placement Total Hours:
-            <input
-              type="number"
-              value={formFields.fieldworkPlacementTotalHours}
-              readOnly
-            />
-          </label>
-        </div>
-        <div>
-          <label>
-            Other Total Hours:
-            <input type="number" value={formFields.otherTotalHours} readOnly />
           </label>
         </div>
 
-        <h3>Assessments</h3>
+        <div className="section-heading">Teaching Schedule</div>
+        <div className="form-row">
+          <label>
+            Lectures:
+            <input
+              className="input-field"
+              type="number"
+              name="lecturesTotalHours"
+              value={formFields.lecturesTotalHours}
+              onChange={handleInputChange}
+            />
+          </label>
+          <label>
+            Seminars:
+            <input
+              className="input-field"
+              type="number"
+              name="seminarsTotalHours"
+              value={formFields.seminarsTotalHours}
+              onChange={handleInputChange}
+            />
+          </label>
+          <label>
+            Tutorials:
+            <input
+              className="input-field"
+              type="number"
+              name="tutorialsTotalHours"
+              value={formFields.tutorialsTotalHours}
+              onChange={handleInputChange}
+            />
+          </label>
+          <label>
+            Labs:
+            <input
+              className="input-field"
+              type="number"
+              name="labsTotalHours"
+              value={formFields.labsTotalHours}
+              onChange={handleInputChange}
+            />
+          </label>
+          <label>
+            Fieldwork Placement:
+            <input
+              className="input-field"
+              type="number"
+              name="fieldworkPlacementTotalHours"
+              value={formFields.fieldworkPlacementTotalHours}
+              onChange={handleInputChange}
+            />
+          </label>
+          <label>
+            Other:
+            <input
+              className="input-field"
+              type="number"
+              name="otherTotalHours"
+              value={formFields.otherTotalHours}
+              onChange={handleInputChange}
+            />
+          </label>
+        </div>
+
+        <div className="section-heading">Assessments</div>
         {formFields.assessments.map((assessment, index) => (
-          <div key={index}>
+          <div key={index} className="form-row">
             <label>
               Assessment Type:
-              <input
-                type="text"
-                value={assessment.assessmentType}
+              <select
+                className="input-field"
+                value={assessment.type}
                 onChange={(e) =>
                   handleAssessmentChange(index, "type", e.target.value)
                 }
-              />
+              >
+                <option value="Coursework">Coursework</option>
+                <option value="Exam">Exam</option>
+              </select>
+              ¸
             </label>
+            <>
+              <label>
+                Weightage
+                <input
+                  className="input-field"
+                  type="number"
+                  value={assessment.weightage}
+                  placeholder="Weightage (%)"
+                  onChange={(e) =>
+                    handleAssessmentChange(index, "weightage", e.target.value)
+                  }
+                />
+              </label>
+            </>
             <label>
-              Weightage (%):
+              Deadline
               <input
-                type="number"
-                value={assessment.weightage}
-                onChange={(e) =>
-                  handleAssessmentChange(index, "weightage", e.target.value)
-                }
-              />
-            </label>
-            <label>
-              Deadline:
-              <input
+                className="input-field"
                 type="text"
                 value={assessment.deadline}
+                placeholder="Deadline"
                 onChange={(e) =>
                   handleAssessmentChange(index, "deadline", e.target.value)
                 }
               />
             </label>
-            <button type="button" onClick={() => handleDeleteAssessment(index)}>
+            <button
+              className="action-btn delete-btn"
+              onClick={() => handleDeleteAssessment(index)}
+            >
               Delete
             </button>
           </div>
         ))}
-
-        <button type="button" onClick={onClose}>
-          Close
+        <button
+          type="button"
+          onClick={handleAddAssessment}
+          className="action-btn add-btn"
+        >
+          Add Assessment
         </button>
+
+        <div className="form-actions">
+          <button className="save-btn" type="submit">
+            Save All Data
+          </button>
+          <button className="close-btn" type="button" onClick={onClose}>
+            Close
+          </button>
+        </div>
       </form>
     </div>
   );

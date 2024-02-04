@@ -336,7 +336,6 @@ const InputForm = () => {
                 >
                   <option value="exam">Exam</option>
                   <option value="coursework">Coursework</option>
-                  <option value="classTest">Class Test</option>
                 </select>
               </td>
               <td>

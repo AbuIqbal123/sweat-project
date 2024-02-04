@@ -1,88 +1,47 @@
 /* EditModuleModal.css */
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0.6);
-}
 
-.modal-content {
+.edit-module-modal {
   background-color: #fff;
-  padding: 30px;
+  padding: 20px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  max-width: 800px;
-  width: 90%;
-}
-
-.close-button {
-  float: right;
-  font-size: 1.5rem;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.close-button:hover {
-  color: #000;
-}
-
-.form-section label {
-  display: block;
-  margin-bottom: 5px;
-  color: #333;
-}
-
-.form-section input,
-.form-section select {
   width: 100%;
-  padding: 8px;
-  margin-bottom: 10px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  box-sizing: border-box;
+  max-width: 800px; /* Adjust as needed */
+  margin: auto;
 }
 
-.field-group {
+.modal-title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.modal-form {
   display: flex;
-  flex-wrap: wrap; /* Allow wrapping as a fallback */
-  gap: 10px; /* Reduced gap for better fit */
-  justify-content: flex-start; /* Align to the start of the modal */
+  flex-direction: column;
 }
 
-.field-group .field {
-  flex: 0 0 auto; /* Do not grow or shrink */
-  width: calc(16.66% - 10px); /* Calculate width for 6 items minus gap */
-  margin-bottom: 10px; /* Provide bottom margin for wrapped items */
+.form-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
 }
 
-/* Ensure that fields wrap on smaller screens */
-@media (max-width: 1200px) {
-  .field-group .field {
-    width: calc(33.33% - 10px); /* 3 items per row */
-  }
+.input-field {
+  flex: 1;
+  margin-right: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
-@media (max-width: 768px) {
-  .modal-content {
-    width: 95%;
-  }
+.input-field:last-child {
+  margin-right: 0;
+}
 
-  .field-group {
-    justify-content: center; /* Center fields for visual balance */
-  }
-
-  .field-group .field {
-    width: 100%; /* Full width on small screens */
-  }
-
-  .field-group .field:last-child {
-    margin-bottom: 0; /* Remove bottom margin from the last item */
-  }
+.section-heading {
+  font-weight: bold;
+  margin-top: 20px;
+  margin-bottom: 10px;
 }
 
 .form-actions {
@@ -91,25 +50,45 @@
   margin-top: 20px;
 }
 
-.form-actions button {
-  padding: 10px 20px;
-  border-radius: 5px;
+.action-btn {
+  padding: 10px 15px;
   border: none;
+  border-radius: 4px;
   cursor: pointer;
-  font-weight: bold;
 }
 
-.add-assessment {
+.save-btn {
   background-color: #4caf50;
   color: white;
 }
 
-.save-data {
-  background-color: #0056b3;
+.close-btn {
+  background-color: #f44336;
   color: white;
 }
 
-.add-assessment:hover,
-.save-data:hover {
-  opacity: 0.9;
+.delete-btn {
+  background-color: #e53935;
+  color: white;
+  margin-right: 5px;
+}
+
+.edit-btn {
+  background-color: #fdd835;
+  color: white;
+}
+
+/* Assuming you have similar button styles already, add this for consistency */
+.button {
+  padding: 10px 20px;
+  margin: 10px 0;
+  background-color: #5cb85c; /* Example color */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: #4cae4c; /* Darker variant for hover state */
 }
