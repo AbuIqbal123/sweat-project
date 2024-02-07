@@ -2,8 +2,13 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 
-const ModuleSelection = ({ setModuleData, setSelectedStudyStyle }) => {
-  const [selectedModule, setSelectedModule] = useState("ELEC362");
+const ModuleSelection = ({
+  setModuleData,
+  setSelectedStudyStyle,
+  setSelectedModule,
+  handleDocumentUpdate,
+}) => {
+  const [selectedModule, setSelectedModuleLocal] = useState(""); // Local state to track the selected module code
   const [selectedStudyStyle, setSelectedStudyStyleLocal] = useState("balanced");
   const [modules, setModules] = useState([]);
   const [moduleData, setLocalModuleData] = useState(null);
@@ -43,13 +48,15 @@ const ModuleSelection = ({ setModuleData, setSelectedStudyStyle }) => {
 
   const handleModuleChange = (event) => {
     const moduleCode = event.target.value;
-    setSelectedModule(moduleCode);
+    setSelectedModuleLocal(moduleCode); // Update local state
+    setSelectedModule(moduleCode); // Update parent's selectedModule state
+    handleDocumentUpdate(moduleCode); // Attempting to fetch data right after state update may be premature
   };
 
   const handleStudyStyleChange = (event) => {
     const style = event.target.value;
     setSelectedStudyStyle(style);
-    setSelectedStudyStyleLocal(style); // Set local state for selectedStudyStyle
+    setSelectedStudyStyleLocal(style); // Update local state for selectedStudyStyle
   };
 
   return (

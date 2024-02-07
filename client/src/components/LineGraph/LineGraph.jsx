@@ -13,7 +13,7 @@ import "./LineGraph.css";
 import EditButton from "./EditButton";
 import EditModuleModal from "./EditModuleModal";
 
-const StudyHoursLineGraph = ({ moduleData, studyStyle }) => {
+const StudyHoursLineGraph = ({ moduleData, studyStyle, handleDocumentUpdate }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const toggleModal = () => setIsModalOpen(!isModalOpen);
@@ -30,10 +30,11 @@ const StudyHoursLineGraph = ({ moduleData, studyStyle }) => {
   const weeks = Array.from({ length: 16 }, (_, i) => i);
   const selectedCourseworkPrep = moduleData.courseworkPrep[studyStyle];
 
+  console.log("lab hours", moduleData)
   // Calculate hours for different study components
   const labHours = weeks.map((week) => {
-    if (moduleData && moduleData.labHours) {
-      const weekData = moduleData.labHours.find((lab) => lab.week === week);
+    if (moduleData && moduleData.labs) {
+      const weekData = moduleData.labs.find((lab) => lab.week === week);
       return weekData ? weekData.hours : 0;
     }
     return 0;
@@ -191,6 +192,7 @@ const StudyHoursLineGraph = ({ moduleData, studyStyle }) => {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           moduleData={moduleData}
+          onDataUpdate={handleDocumentUpdate}
         />
       </div>
     </div>

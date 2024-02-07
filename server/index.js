@@ -25,14 +25,32 @@ app.use(express.json()); // Body parser middleware for handling JSON
 // routes
 
 const ModuleModel = require("./models/moduleSchema");
+
+// Endpoint to fetch all modules
 app.get("/getModules", (req, res) => {
   ModuleModel.find()
     .then((modules) => {
       res.json(modules);
     })
     .catch((err) => {
-      console.error("Error fetching modules:", err); // Error log for fetching modules
-      res.status(400).json("Error: " + err);
+      console.error("Error fetching modules:", err);
+      res.status(500).json({ error: "Internal server error" });
+    });
+});
+
+// Endpoint to fetch a specific module by moduleCode
+app.get("/getModule/:moduleCode", (req, res) => {
+  const moduleCode = req.params.moduleCode;
+  ModuleModel.findOne({ moduleCode })
+    .then((module) => {
+      if (!module) {
+        return res.status(404).json({ error: "Module not found" });
+      }
+      res.json(module);
+    })
+    .catch((err) => {
+      console.error("Error fetching module:", err);
+      res.status(500).json({ error: "Internal server error" });
     });
 });
 

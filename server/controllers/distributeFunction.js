@@ -1,6 +1,6 @@
 const distributeStudyHours = (studyHours, deadline, style) => {
   // Maximum study hours per week
-  const maxHoursPerWeek = 20;
+  const maxHoursPerWeek = process.env.MAX_HOURS_PER_WEEK || 20;
   // Define a function to create an array with weeks and hours
   const createArrayWithWeeks = (distributionArray) => {
     const distributionObjects = distributionArray.map((hours, index) => ({

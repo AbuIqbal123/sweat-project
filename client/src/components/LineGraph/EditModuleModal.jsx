@@ -26,7 +26,6 @@ function EditModuleModal({ isOpen, onClose, moduleData, onDataUpdate }) {
   });
 
   const [error, setError] = useState("");
-  const [dataUpdated, setDataUpdated] = useState(false);
 
   useEffect(() => {
     if (moduleData && moduleData.coursework) {
@@ -130,7 +129,7 @@ function EditModuleModal({ isOpen, onClose, moduleData, onDataUpdate }) {
         [updatedModuleData] // Send data as an array if that's what your backend expects
       );
       if (response.status === 200) {
-        setDataUpdated(true);
+        onDataUpdate(formFields.moduleCode);
         onClose();
         // Optionally, use a more controlled approach instead of reloading
       }
