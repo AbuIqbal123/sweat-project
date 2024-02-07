@@ -1,12 +1,13 @@
 const TransformedDataModel = require("../models/moduleSchema");
 const { distributeStudyHours } = require("./distributeFunction");
 
+const mongoose = require("mongoose");
+
 const transformInputToDatabaseSchema = async (inputData) => {
   try {
     if (!Array.isArray(inputData) || inputData.length === 0) {
       throw new Error("Invalid input data");
     }
-
     const input = inputData[0];
     const {
       moduleCode,
@@ -19,6 +20,7 @@ const transformInputToDatabaseSchema = async (inputData) => {
       other,
       assessments,
       fieldworkPlacement,
+      _id,
     } = input;
 
     const parsedModuleCredit = parseInt(moduleCredit, 10);
@@ -149,10 +151,20 @@ const transformInputToDatabaseSchema = async (inputData) => {
       courseworkPrep,
     };
 
-    const newDoc = new TransformedDataModel(updatedData);
-    await newDoc.save();
-
-    return updatedData[moduleCode];
+    if (_id) {
+      console.log("Updating document with _id:", _id);
+      const documentId = new mongoose.Types.ObjectId(_id);
+      const updatedDoc = await TransformedDataModel.findByIdAndUpdate(
+        documentId,
+        updatedData,
+        { new: true }
+      );
+      return updatedDoc;
+    } else {
+      const newDoc = new TransformedDataModel(updatedData);
+      await newDoc.save();
+      return newDoc;
+    }
   } catch (error) {
     console.error("Error updating data in DB:", error);
     throw error;

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import "./EditModuleModal.css";
+import axios from "axios";
 
-function EditModuleModal({ isOpen, onClose, moduleData }) {
-  console.log("module data", moduleData);
+function EditModuleModal({ isOpen, onClose, moduleData, onDataUpdate }) {
   const [formFields, setFormFields] = useState({
     moduleCode: "",
     moduleCredit: 0,
@@ -15,32 +15,39 @@ function EditModuleModal({ isOpen, onClose, moduleData }) {
     labsTotalHours: 0,
     fieldworkPlacementTotalHours: 0,
     otherTotalHours: 0,
-    assessments: [],
+    assessments: [
+      {
+        assessmentType: "",
+        deadline: "",
+        weightage: "",
+        distribution: [],
+      },
+    ],
   });
 
-  const assessmentTypes = ["Exam", "Coursework"];
+  const [error, setError] = useState("");
+  const [dataUpdated, setDataUpdated] = useState(false);
 
   useEffect(() => {
     if (moduleData && moduleData.coursework) {
       const calculateTotalHours = (items) =>
         Math.round(items.reduce((total, item) => total + item.hours, 0));
 
-        const mapAssessmentTypeToOption = (type) => {
-          // Check if type is undefined or null before proceeding
-          if (!type) {
-            return "Exam"; // Return a default value or handle this scenario as needed
-          }
-        
-          switch (type.toLowerCase()) {
-            case "exam":
-              return "Exam";
-            case "coursework":
-              return "Coursework";
-            default:
-              return "Exam"; // Default case if type is unrecognized
-          }
-        };
-        
+      const mapAssessmentTypeToOption = (type) => {
+        // Check if type is undefined or null before proceeding
+        if (!type) {
+          return "Exam"; // Return a default value or handle this scenario as needed
+        }
+
+        switch (type.toLowerCase()) {
+          case "exam":
+            return "Exam";
+          case "coursework":
+            return "Coursework";
+          default:
+            return "Exam"; // Default case if type is unrecognized
+        }
+      };
 
       const initializedAssessments = moduleData.coursework.map(
         (assessment) => ({
@@ -74,30 +81,68 @@ function EditModuleModal({ isOpen, onClose, moduleData }) {
     setFormFields({ ...formFields, [name]: value });
   };
 
+  const addAssessment = () => {
+    setFormFields((prevFields) => ({
+      ...prevFields,
+      assessments: [
+        ...prevFields.assessments,
+        { assessmentType: "", deadline: "", weightage: "", distribution: [] },
+      ],
+    }));
+  };
+
+  const deleteAssessment = (index) => {
+    setFormFields((prevFields) => ({
+      ...prevFields,
+      assessments: prevFields.assessments.filter((_, i) => i !== index),
+    }));
+  };
+
   const handleAssessmentChange = (index, field, value) => {
-    const updatedAssessments = formFields.assessments.map((assessment, i) =>
-      i === index ? { ...assessment, [field]: value } : assessment
-    );
-    setFormFields({ ...formFields, assessments: updatedAssessments });
+    setFormFields((prevFields) => ({
+      ...prevFields,
+      assessments: prevFields.assessments.map((assessment, i) =>
+        i === index ? { ...assessment, [field]: value } : assessment
+      ),
+    }));
   };
 
-  const handleDeleteAssessment = (index) => {
-    const filteredAssessments = formFields.assessments.filter(
-      (_, i) => i !== index
-    );
-    setFormFields({ ...formFields, assessments: filteredAssessments });
-  };
-
-  const handleAddAssessment = () => {
-    const newAssessment = {
-      type: "Exam", // Default type, can be changed as needed
-      weightage: 0,
-      deadline: "",
+  const handleSubmit = async () => {
+    setError(""); // Assuming you have similar validation functions in place
+    const updatedModuleData = {
+      // Construct the data object from state
+      moduleCode: formFields.moduleCode,
+      moduleCredit: formFields.moduleCredit,
+      timetabledHours: formFields.timetabledHours,
+      lectures: formFields.lecturesTotalHours, // Adapt based on your state structure
+      seminars: formFields.seminarsTotalHours,
+      tutorial: formFields.tutorialsTotalHours,
+      labs: formFields.labsTotalHours,
+      fieldworkPlacement: formFields.fieldworkPlacementTotalHours,
+      other: formFields.otherTotalHours,
+      assessments: formFields.assessments,
+      _id: moduleData._id, // Include the document's unique identifier
     };
-    setFormFields({
-      ...formFields,
-      assessments: [...formFields.assessments, newAssessment],
-    });
+
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/api/transformData",
+        [updatedModuleData] // Send data as an array if that's what your backend expects
+      );
+      if (response.status === 200) {
+        setDataUpdated(true);
+        onClose();
+        // Optionally, use a more controlled approach instead of reloading
+      }
+    } catch (error) {
+      if (error.response) {
+        setError("Failed to save data. Please try again later.");
+      } else if (error.request) {
+        setError("Network error. Please check your internet connection.");
+      } else {
+        setError("An unexpected error occurred.");
+      }
+    }
   };
 
   if (!isOpen) return null;
@@ -210,30 +255,31 @@ function EditModuleModal({ isOpen, onClose, moduleData }) {
               Assessment Type:
               <select
                 className="input-field"
-                value={assessment.type}
+                value={assessment.type} // Ensure this matches your state's field
                 onChange={(e) =>
-                  handleAssessmentChange(index, "type", e.target.value)
+                  handleAssessmentChange(
+                    index,
+                    "assessmentType",
+                    e.target.value
+                  )
                 }
               >
                 <option value="Coursework">Coursework</option>
                 <option value="Exam">Exam</option>
               </select>
-              ¸
             </label>
-            <>
-              <label>
-                Weightage
-                <input
-                  className="input-field"
-                  type="number"
-                  value={assessment.weightage}
-                  placeholder="Weightage (%)"
-                  onChange={(e) =>
-                    handleAssessmentChange(index, "weightage", e.target.value)
-                  }
-                />
-              </label>
-            </>
+            <label>
+              Weightage
+              <input
+                className="input-field"
+                type="number"
+                value={assessment.weightage}
+                placeholder="Weightage (%)"
+                onChange={(e) =>
+                  handleAssessmentChange(index, "weightage", e.target.value)
+                }
+              />
+            </label>
             <label>
               Deadline
               <input
@@ -248,7 +294,7 @@ function EditModuleModal({ isOpen, onClose, moduleData }) {
             </label>
             <button
               className="action-btn delete-btn"
-              onClick={() => handleDeleteAssessment(index)}
+              onClick={() => deleteAssessment(index)}
             >
               Delete
             </button>
@@ -256,14 +302,14 @@ function EditModuleModal({ isOpen, onClose, moduleData }) {
         ))}
         <button
           type="button"
-          onClick={handleAddAssessment}
+          onClick={addAssessment}
           className="action-btn add-btn"
         >
           Add Assessment
         </button>
 
         <div className="form-actions">
-          <button className="save-btn" type="submit">
+          <button className="save-btn" type="submit" onClick={handleSubmit}>
             Save All Data
           </button>
           <button className="close-btn" type="button" onClick={onClose}>
