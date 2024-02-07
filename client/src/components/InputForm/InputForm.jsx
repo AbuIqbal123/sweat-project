@@ -102,19 +102,6 @@ const InputForm = () => {
   };
 
   const validateInputs = () => {
-    console.log("Values:", {
-      moduleCode,
-      moduleCredit,
-      timetabledHours,
-      lectures,
-      seminars,
-      tutorial,
-      labs,
-      fieldworkPlacement,
-      other,
-      assessments,
-    });
-
     // Validation logic for the individual assessments
     const assessmentsValid = assessments.every((assessment) => {
       return (
@@ -163,19 +150,6 @@ const InputForm = () => {
 
   const handleSubmit = async () => {
     setError("");
-
-    console.log("Values:", {
-      moduleCode,
-      moduleCredit,
-      timetabledHours,
-      lectures,
-      seminars,
-      tutorial,
-      labs,
-      fieldworkPlacement,
-      other,
-      assessments,
-    });
 
     if (validateInputs() && validateHours() && validateWeightage()) {
       try {

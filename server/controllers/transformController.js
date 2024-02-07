@@ -55,7 +55,6 @@ const transformInputToDatabaseSchema = async (inputData) => {
 
     const tutorialsData = createArrayWithWeeks(parsedTutorial);
     const labsData = createArrayWithWeeks(parsedLabs);
-    console.log("labsData",labsData);
     const lecturesData = createArrayWithWeeks(parsedLectures);
     const seminarsData = createArrayWithWeeks(parsedSeminars);
     const fieldworkPlacementData = createArrayWithWeeks(
@@ -68,7 +67,11 @@ const transformInputToDatabaseSchema = async (inputData) => {
     );
 
     const coursework = assessments
-      .filter((assessment) => assessment.assessmentType === "coursework" || assessment.assessmentType === "class test")
+      .filter(
+        (assessment) =>
+          assessment.assessmentType === "coursework" ||
+          assessment.assessmentType === "exam"
+      )
       .map((assessment) => {
         const assessmentType = assessment.assessmentType;
         const weightage = parseInt(assessment.weightage, 10);
@@ -95,35 +98,38 @@ const transformInputToDatabaseSchema = async (inputData) => {
     };
 
     coursework.forEach((courseworkItem) => {
-      const { studyHours, deadline } = courseworkItem;
+      // Check if the courseworkItem's assessmentType is "coursework"
+      if (courseworkItem.assessmentType === "coursework") {
+        const { studyHours, deadline } = courseworkItem;
 
-      const balancedDistribution = distributeStudyHours(
-        studyHours,
-        deadline,
-        "balanced"
-      );
-      const procrastinatorDistribution = distributeStudyHours(
-        studyHours,
-        deadline,
-        "procrastinator"
-      );
-      const earlybirdDistribution = distributeStudyHours(
-        studyHours,
-        deadline,
-        "earlybird"
-      );
+        const balancedDistribution = distributeStudyHours(
+          studyHours,
+          deadline,
+          "balanced"
+        );
+        const procrastinatorDistribution = distributeStudyHours(
+          studyHours,
+          deadline,
+          "procrastinator"
+        );
+        const earlybirdDistribution = distributeStudyHours(
+          studyHours,
+          deadline,
+          "earlybird"
+        );
 
-      balancedDistribution.forEach((weekData, index) => {
-        courseworkPrep.balanced[index].hours += weekData.hours;
-      });
+        balancedDistribution.forEach((weekData, index) => {
+          courseworkPrep.balanced[index].hours += weekData.hours;
+        });
 
-      procrastinatorDistribution.forEach((weekData, index) => {
-        courseworkPrep.procrastinator[index].hours += weekData.hours;
-      });
+        procrastinatorDistribution.forEach((weekData, index) => {
+          courseworkPrep.procrastinator[index].hours += weekData.hours;
+        });
 
-      earlybirdDistribution.forEach((weekData, index) => {
-        courseworkPrep.earlybird[index].hours += weekData.hours;
-      });
+        earlybirdDistribution.forEach((weekData, index) => {
+          courseworkPrep.earlybird[index].hours += weekData.hours;
+        });
+      }
     });
 
     const updatedData = {
