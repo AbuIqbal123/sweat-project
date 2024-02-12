@@ -13,8 +13,15 @@ import "./LineGraph.css";
 import EditButton from "./EditButton";
 import EditModuleModal from "./EditModuleModal";
 
-const StudyHoursLineGraph = ({ moduleData, studyStyle, handleDocumentUpdate }) => {
+const StudyHoursLineGraph = ({
+  moduleData,
+  studyStyle,
+  handleDocumentUpdate,
+  isDisabledForStudents,
+}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  console.log(moduleData);
 
   const toggleModal = () => setIsModalOpen(!isModalOpen);
 
@@ -25,12 +32,9 @@ const StudyHoursLineGraph = ({ moduleData, studyStyle, handleDocumentUpdate }) =
       </div>
     );
   }
-
   // Array representing weeks
   const weeks = Array.from({ length: 16 }, (_, i) => i);
   const selectedCourseworkPrep = moduleData.courseworkPrep[studyStyle];
-
-  console.log("lab hours", moduleData)
   // Calculate hours for different study components
   const labHours = weeks.map((week) => {
     if (moduleData && moduleData.labs) {
@@ -186,15 +190,17 @@ const StudyHoursLineGraph = ({ moduleData, studyStyle, handleDocumentUpdate }) =
           )}
         </LineChart>
       </div>
-      <div className="line-graph-container">
-        <EditButton onClick={() => setIsModalOpen(true)} />
-        <EditModuleModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          moduleData={moduleData}
-          onDataUpdate={handleDocumentUpdate}
-        />
-      </div>
+      {!isDisabledForStudents && ( // This conditionally renders the components based on the role
+        <div className="line-graph-container">
+          <EditButton onClick={() => setIsModalOpen(true)} />
+          <EditModuleModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            moduleData={moduleData}
+            onDataUpdate={handleDocumentUpdate}
+          />
+        </div>
+      )}
     </div>
   );
 };

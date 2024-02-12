@@ -1,61 +1,96 @@
 import React, { useState, useEffect } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import InputForm from "./components/InputForm/InputForm";
 import ModuleSelection from "./components/Buttons/ModuleSelection";
-import StudyHoursLineGraph from "./components/LineGraph/LineGraph"; // Assuming the file path is correct
+import StudyHoursLineGraph from "./components/LineGraph/LineGraph";
+import ExportPDFButton from "./components/ExportPDF/ExportPDF";
 import axios from "axios";
+import { Box, ButtonGroup, Button } from "@mui/material";
+
 function App() {
   const [moduleData, setModuleData] = useState(null);
   const [selectedStudyStyle, setSelectedStudyStyle] = useState("balanced");
   const [selectedModule, setSelectedModule] = useState("");
+  const [userRole, setUserRole] = useState("Student");
 
   const handleDocumentUpdate = (selectedModule) => {
-    console.log("Attempting to fetch data for module:", selectedModule); // Debug log
     axios
       .get(`http://localhost:8000/getModule/${selectedModule}`)
       .then((response) => {
-        console.log(
-          `Data fetched for module: ${selectedModule}`,
-          response.data
-        );
         setModuleData(response.data);
       })
       .catch((error) => console.error("Failed to fetch module data:", error));
   };
 
-  // In App.js
   useEffect(() => {
     if (selectedModule) {
-      console.log("Selected Module in App:", selectedModule); // Ensure this logs the correct value
       handleDocumentUpdate(selectedModule);
     }
   }, [selectedModule]);
 
+  const isSelected = (role) => userRole === role;
+
   return (
-    <div className="app-container">
-      <div className="header">
+    <Box className="app-container" sx={{ padding: 2 }}>
+      <Box sx={{ marginBottom: 4 }}>
         <h1>SWEAT Project</h1>
+        <ButtonGroup
+          variant="contained"
+          aria-label="outlined primary button group"
+          sx={{ marginTop: 2 }}
+        >
+          {["Student", "Admin"].map((role) => (
+            <Button
+              key={role}
+              onClick={() => setUserRole(role)}
+              variant={isSelected(role) ? "contained" : "outlined"}
+              sx={{
+                backgroundColor: isSelected(role)
+                  ? "primary.main"
+                  : "transparent",
+                color: isSelected(role) ? "#fff" : "primary.main",
+                borderColor: "primary.main",
+                "&:hover": {
+                  backgroundColor: isSelected(role)
+                    ? "primary.dark"
+                    : "transparent",
+                  color: isSelected(role) ? "#fff" : "primary.dark",
+                },
+              }}
+            >
+              {role}
+            </Button>
+          ))}
+        </ButtonGroup>
+      </Box>
+      <Box sx={{ marginX: 2, marginBottom: 4 }}>
         <ModuleSelection
           setModuleData={setModuleData}
           setSelectedStudyStyle={setSelectedStudyStyle}
           setSelectedModule={setSelectedModule}
           handleDocumentUpdate={handleDocumentUpdate}
         />
-      </div>
-
-      <div className="line-graph">
+      </Box>
+      <Box sx={{ marginBottom: 4 }}>
         <StudyHoursLineGraph
           moduleData={moduleData}
           studyStyle={selectedStudyStyle}
           handleDocumentUpdate={handleDocumentUpdate}
+          userRole={userRole}
+          isDisabledForStudents={userRole === "Student"}
         />
-      </div>
-
-      <div className="input-form">
-        <InputForm />
-      </div>
-    </div>
+      </Box>
+      {moduleData && (
+        <Box sx={{ marginBottom: 4 }}>
+          <ExportPDFButton moduleData={moduleData} studyStyle={selectedStudyStyle} />
+        </Box>
+      )}
+      {userRole === "Admin" && (
+        <Box sx={{ marginBottom: 4 }}>
+          <InputForm />
+        </Box>
+      )}
+    </Box>
   );
 }
 

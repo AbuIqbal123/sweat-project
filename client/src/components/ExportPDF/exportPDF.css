@@ -1,0 +1,19 @@
+.previewButton,
+.downloadButton {
+  transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  will-change: transform, box-shadow;
+}
+
+.previewButton {
+  background: linear-gradient(135deg, #007cf0, #00dfd8);
+}
+
+.previewButton:hover,
+.downloadButton:hover {
+  transform: scale(1.05); /* Slightly scale up the button */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Add a shadow for depth */
+}
+
+.downloadButton {
+  background: linear-gradient(135deg, #7928ca, #ff0080);
+}
