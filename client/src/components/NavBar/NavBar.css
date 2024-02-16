@@ -1,0 +1,44 @@
+/* NavBar.css */
+.appBar {
+  background-color: #fff; /* Light background */
+  color: #000; /* Dark text */
+  box-shadow: none; /* Removes shadow for a flat design */
+  border-bottom: 1px solid #e0e0e0; /* Subtle bottom border */
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.brandName {
+  flex-grow: 1;
+  font-weight: bold;
+}
+
+.navButton {
+  margin: 8px;
+  color: #333; /* Slightly darker text for better readability */
+  text-transform: none; /* Retains normal casing for a more professional look */
+}
+
+/* Additional styles for hover, focus, etc., to enhance the user experience */
+.navButton:hover {
+  background-color: rgba(0, 0, 0, 0.04); /* Light hover effect */
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .brandName {
+    font-size: 18px; /* Smaller text for smaller screens */
+  }
+
+  .navButton {
+    font-size: 14px; /* Adjust button text size */
+  }
+}
+
+.appBar {
+  background-color: #fff !important; /* Example: Force white background */
+}

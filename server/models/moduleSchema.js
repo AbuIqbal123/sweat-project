@@ -2,7 +2,10 @@ const mongoose = require("mongoose");
 
 const moduleSchema = new mongoose.Schema({
   moduleCode: String,
+  moduleTitle: String,
   moduleCredit: Number,
+  moduleSemester: String,
+  courses: [String], // Array of strings to hold multiple course names
   totalStudyHours: Number,
   timetabledHours: Number,
   privateStudyHours: Number,
@@ -31,6 +34,6 @@ const moduleSchema = new mongoose.Schema({
   },
 });
 
-const ModuleModel = mongoose.model("modules", moduleSchema);
+const ModuleModel = mongoose.model("Module", moduleSchema);
 
 module.exports = ModuleModel;
