@@ -66,15 +66,19 @@ export function useModulePage() {
     doc.setFontSize(10);
     doc.text("Module Data Calendar", 10, 10);
 
-    filteredRows.forEach((moduleData, index) => {
-      const tableColumns = [
-        "Module Code",
-        ...Array.from({ length: 15 }, (_, i) => `Week ${i + 1}`),
-      ];
+    // Define table columns outside of the loop
+    const tableColumns = [
+      "Module Code",
+      ...Array.from({ length: 15 }, (_, i) => `Week ${i + 1}`),
+    ];
+
+    // Initialize an array to hold all rows of module data
+    let tableData = [];
+
+    filteredRows.forEach((moduleData) => {
       const moduleRow = new Array(16).fill("");
       moduleRow[0] = moduleData.moduleCode;
 
-      // Assuming moduleData.coursework and its structure
       moduleData.coursework.forEach((cw) => {
         const deadlineWeek = cw.deadline - 1;
         if (deadlineWeek >= 0 && deadlineWeek < 15) {
@@ -86,19 +90,17 @@ export function useModulePage() {
         }
       });
 
-      const tableData = [moduleRow];
+      // Add this module's row to the tableData array
+      tableData.push(moduleRow);
+    });
 
-      if (index > 0) {
-        doc.addPage();
-      }
-
-      doc.autoTable({
-        head: [tableColumns],
-        body: tableData,
-        theme: "grid",
-        styles: { fontSize: 9 },
-        startY: doc.lastAutoTable.finalY ? doc.lastAutoTable.finalY + 10 : 20,
-      });
+    // Call autoTable once with all module data
+    doc.autoTable({
+      head: [tableColumns],
+      body: tableData,
+      theme: "grid",
+      styles: { fontSize: 9 },
+      startY: 20,
     });
 
     doc.output("dataurlnewwindow");

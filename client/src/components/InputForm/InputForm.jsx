@@ -22,6 +22,9 @@ const InputForm = () => {
       distribution: [],
     },
   ]);
+  const [moduleTitle, setModuleTitle] = useState(""); // For module title
+  const [semester, setSemester] = useState(""); // For semester
+  const [courses, setCourses] = useState([]);
 
   const addAssessment = () => {
     setAssessments((prevAssessments) => [
@@ -148,6 +151,23 @@ const InputForm = () => {
     setAssessments(updatedAssessments);
   };
 
+  const handleModuleTitleChange = (event) => {
+    setModuleTitle(event.target.value);
+  };
+
+  const handleSemesterChange = (event) => {
+    setSemester(event.target.value);
+  };
+
+  const handleCoursesChange = (event) => {
+    const { value, checked } = event.target;
+    if (checked) {
+      setCourses([...courses, value]);
+    } else {
+      setCourses(courses.filter((course) => course !== value));
+    }
+  };
+
   const handleSubmit = async () => {
     setError("");
 
@@ -167,6 +187,9 @@ const InputForm = () => {
               fieldworkPlacement,
               other,
               assessments,
+              moduleTitle,
+              semester,
+              courses,
             },
           ]
         );
@@ -219,6 +242,46 @@ const InputForm = () => {
             onChange={handleTimetabledHoursChange}
             placeholder="Enter Timetabled Hours"
           />
+        </div>
+        <div className="input-wrapper">
+          <label htmlFor="moduleTitle">Module Title:</label>
+          <input
+            type="text"
+            id="moduleTitle"
+            value={moduleTitle}
+            onChange={(e) => setModuleTitle(e.target.value)}
+            placeholder="Enter Module Title"
+          />
+        </div>
+        <div className="input-wrapper">
+          <label htmlFor="semester">Semester:</label>
+          <select
+            id="semester"
+            value={semester}
+            onChange={(e) => setSemester(e.target.value)}
+          >
+            <option value="">Select Semester</option>
+            <option value="First">First</option>
+            <option value="Second">Second</option>
+            <option value="Whole Session">Whole Session</option>
+          </select>
+        </div>
+        <div className="input-wrapper">
+          <label>Courses:</label>
+          <div>
+            {["CSEE", "MCR", "EEE", "AVS"].map((course) => (
+              <div key={course}>
+                <input
+                  type="checkbox"
+                  id={course}
+                  value={course}
+                  onChange={handleCoursesChange}
+                  checked={courses.includes(course)}
+                />
+                <label htmlFor={course}>{course}</label>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 

@@ -21,6 +21,9 @@ const transformInputToDatabaseSchema = async (inputData) => {
       assessments,
       fieldworkPlacement,
       _id,
+      moduleTitle,
+      semester,
+      courses,
     } = input;
 
     const parsedModuleCredit = parseInt(moduleCredit, 10);
@@ -149,6 +152,9 @@ const transformInputToDatabaseSchema = async (inputData) => {
       examPrep,
       coursework,
       courseworkPrep,
+      moduleTitle, // Assuming moduleTitle is a string
+      moduleSemester: semester, // Assuming semester is a string or number
+      courses,
     };
 
     if (_id) {
