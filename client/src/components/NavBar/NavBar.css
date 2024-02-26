@@ -1,44 +1,63 @@
 /* NavBar.css */
-.appBar {
-  background-color: #fff; /* Light background */
-  color: #000; /* Dark text */
-  box-shadow: none; /* Removes shadow for a flat design */
-  border-bottom: 1px solid #e0e0e0; /* Subtle bottom border */
-}
-
-.toolbar {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-}
-
-.brandName {
-  flex-grow: 1;
-  font-weight: bold;
-}
-
-.navButton {
-  margin: 8px;
-  color: #333; /* Slightly darker text for better readability */
-  text-transform: none; /* Retains normal casing for a more professional look */
-}
-
-/* Additional styles for hover, focus, etc., to enhance the user experience */
-.navButton:hover {
-  background-color: rgba(0, 0, 0, 0.04); /* Light hover effect */
-}
-
-/* Responsive adjustments */
-@media (max-width: 600px) {
-  .brandName {
-    font-size: 18px; /* Smaller text for smaller screens */
+.navBar {
+    width: 60%;
+    background-color: #001f3f; /* Deep navy blue background */
+    border-radius: 10px; /* Rounded edges for a sleek design */
   }
-
-  .navButton {
-    font-size: 14px; /* Adjust button text size */
+  
+  .toolbar {
+    display: flex;
+    align-items: center;
   }
-}
-
-.appBar {
-  background-color: #fff !important; /* Example: Force white background */
-}
+  
+  .navLinks {
+    display: flex;
+    gap: 20px; /* Adjust the space between navigation links */
+  }
+  
+  .navLinks a {
+    color: white;
+    text-decoration: none;
+    position: relative;
+  }
+  
+  .navLinks a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -3px;
+    width: 100%;
+    height: 2px;
+    background-color: transparent;
+    transition: background-color 0.3s ease;
+  }
+  
+  .navLinks a:hover::after,
+  .navLinks a.active::after {
+    background-color: white; /* Change to your desired active link color */
+  }
+  
+  .selectRole {
+    color: black; /* Adjust the color to fit your theme */
+    border-color: transparent; /* For the outline of the select component */
+    margin-left: auto; /* Move the select component to the rightmost edge */
+  }
+  
+  .roleLabel {
+    color: white; /* Color for the 'Role' label */
+    font-weight: bold; /* Make the label text bold */
+    margin-right: 10px; /* Add some margin to separate the label from the select component */
+  }
+  
+  /* Adjustments for small screens */
+  @media (max-width: 600px) {
+    .toolbar {
+      flex-direction: column;
+    }
+  
+    .navLinks {
+      flex-direction: column;
+      width: 100%;
+    }
+  }
+  

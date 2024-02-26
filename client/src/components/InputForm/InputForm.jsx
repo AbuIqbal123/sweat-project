@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import "./InputForm.css";
 
-const InputForm = () => {
+const InputForm = ({ userRole }) => {
   const [moduleCode, setModuleCode] = useState("");
   const [moduleCredit, setModuleCredit] = useState("");
   const [timetabledHours, setTimetabledHours] = useState("");
@@ -206,203 +206,231 @@ const InputForm = () => {
         }
       }
     }
+    if (userRole === "Student") {
+      setError("Permission denied. You are not an admin.");
+      return;
+    }
   };
-
   return (
-    <div className="form-container">
-      {error && <div className="error">{error}</div>}
-      <h2>Module Information</h2>
-      <div className="input-group">
-        <div className="input-wrapper">
-          <label htmlFor="moduleCode">Module Code:</label>
-          <input
-            type="text"
-            id="moduleCode"
-            value={moduleCode}
-            onChange={handleModuleCodeChange}
-            placeholder="Enter Module Code"
-          />
+    <>
+      {userRole === "Student" && (
+        <div
+          className="permission-denied-message"
+          style={{
+            backgroundColor: "#ffcccc",
+            color: "#ff0000",
+            padding: "10px",
+            marginBottom: "10px",
+            borderRadius: "5px",
+          }}
+        >
+          Permission denied. You are not an admin...
         </div>
-        <div className="input-wrapper">
-          <label htmlFor="moduleCredit">Module Credit:</label>
-          <input
-            type="number"
-            id="moduleCredit"
-            value={moduleCredit}
-            onChange={handleModuleCreditChange}
-            placeholder="Enter Module Credit"
-          />
-        </div>
-        <div className="input-wrapper">
-          <label htmlFor="timetabledHours">Timetabled Hours:</label>
-          <input
-            type="number"
-            id="timetabledHours"
-            value={timetabledHours}
-            onChange={handleTimetabledHoursChange}
-            placeholder="Enter Timetabled Hours"
-          />
-        </div>
-        <div className="input-wrapper">
-          <label htmlFor="moduleTitle">Module Title:</label>
-          <input
-            type="text"
-            id="moduleTitle"
-            value={moduleTitle}
-            onChange={(e) => setModuleTitle(e.target.value)}
-            placeholder="Enter Module Title"
-          />
-        </div>
-        <div className="input-wrapper">
-          <label htmlFor="semester">Semester:</label>
-          <select
-            id="semester"
-            value={semester}
-            onChange={(e) => setSemester(e.target.value)}
-          >
-            <option value="">Select Semester</option>
-            <option value="First">First</option>
-            <option value="Second">Second</option>
-            <option value="Whole Session">Whole Session</option>
-          </select>
-        </div>
-        <div className="input-wrapper">
-          <label>Courses:</label>
-          <div>
-            {["CSEE", "MCR", "EEE", "AVS"].map((course) => (
-              <div key={course}>
-                <input
-                  type="checkbox"
-                  id={course}
-                  value={course}
-                  onChange={handleCoursesChange}
-                  checked={courses.includes(course)}
-                />
-                <label htmlFor={course}>{course}</label>
+      )}
+      {userRole === "Admin" && (
+        <div className="form-container">
+          {error && <div className="error">{error}</div>}
+
+          <h2>Module Information</h2>
+          <div className="input-group">
+            <div className="input-wrapper">
+              <label htmlFor="moduleCode">Module Code:</label>
+              <input
+                type="text"
+                id="moduleCode"
+                value={moduleCode}
+                onChange={handleModuleCodeChange}
+                placeholder="Enter Module Code"
+              />
+            </div>
+            <div className="input-wrapper">
+              <label htmlFor="moduleCredit">Module Credit:</label>
+              <input
+                type="number"
+                id="moduleCredit"
+                value={moduleCredit}
+                onChange={handleModuleCreditChange}
+                placeholder="Enter Module Credit"
+              />
+            </div>
+            <div className="input-wrapper">
+              <label htmlFor="timetabledHours">Timetabled Hours:</label>
+              <input
+                type="number"
+                id="timetabledHours"
+                value={timetabledHours}
+                onChange={handleTimetabledHoursChange}
+                placeholder="Enter Timetabled Hours"
+              />
+            </div>
+            <div className="input-wrapper">
+              <label htmlFor="moduleTitle">Module Title:</label>
+              <input
+                type="text"
+                id="moduleTitle"
+                value={moduleTitle}
+                onChange={(e) => setModuleTitle(e.target.value)}
+                placeholder="Enter Module Title"
+              />
+            </div>
+            <div className="input-wrapper">
+              <label htmlFor="semester">Semester:</label>
+              <select
+                id="semester"
+                value={semester}
+                onChange={(e) => setSemester(e.target.value)}
+              >
+                <option value="">Select Semester</option>
+                <option value="First">First</option>
+                <option value="Second">Second</option>
+                <option value="Whole Session">Whole Session</option>
+              </select>
+            </div>
+            <div className="input-wrapper">
+              <label>Courses:</label>
+              <div>
+                {["CSEE", "MCR", "EEE", "AVS"].map((course) => (
+                  <div key={course}>
+                    <input
+                      type="checkbox"
+                      id={course}
+                      value={course}
+                      onChange={handleCoursesChange}
+                      checked={courses.includes(course)}
+                    />
+                    <label htmlFor={course}>{course}</label>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
+
+          <h2>Teaching Schedule</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Lectures</th>
+                <th>Seminars</th>
+                <th>Tutorials</th>
+                <th>Labs</th>
+                <th>Fieldwork Placement</th>
+                <th>Other</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <input
+                    type="number"
+                    value={lectures}
+                    onChange={handleLecturesChange}
+                    placeholder="Enter number of Lectures"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    value={seminars}
+                    onChange={handleSeminarsChange}
+                    placeholder="Enter number of Seminars"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    value={tutorial}
+                    onChange={handleTutorialChange}
+                    placeholder="Enter number of Tutorials"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    value={labs}
+                    onChange={handleLabsChange}
+                    placeholder="Enter number of Labs"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    value={fieldworkPlacement}
+                    onChange={handleFieldworkPlacementChange}
+                    placeholder="Enter Fieldwork Placement"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    value={other}
+                    onChange={handleOtherChange}
+                    placeholder="Enter Other"
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2>Assessments</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Assessment Type</th>
+                <th>Weightage (%)</th>
+                <th>Deadline (Week)</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {assessments.map((assessment, index) => (
+                <tr key={index}>
+                  <td>
+                    <select
+                      value={assessment.assessmentType}
+                      onChange={(event) =>
+                        handleAssessmentTypeInputChange(event, index)
+                      }
+                    >
+                      <option value="exam">Exam</option>
+                      <option value="coursework">Coursework</option>
+                    </select>
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      value={assessment.weightage}
+                      onChange={(event) =>
+                        handleWeightageInputChange(event, index)
+                      }
+                      placeholder="Enter Weightage"
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      value={assessment.deadline}
+                      onChange={(event) =>
+                        handleDeadlineInputChange(event, index)
+                      }
+                      placeholder="Enter Deadline"
+                    />
+                  </td>
+                  <td>
+                    <button onClick={() => deleteAssessment(index)}>
+                      Delete
+                    </button>
+                    <button>Edit</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          <button onClick={addAssessment}>Add Assessment</button>
+          <button onClick={handleSubmit}>Save All Data</button>
         </div>
-      </div>
-
-      <h2>Teaching Schedule</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Lectures</th>
-            <th>Seminars</th>
-            <th>Tutorials</th>
-            <th>Labs</th>
-            <th>Fieldwork Placement</th>
-            <th>Other</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>
-              <input
-                type="number"
-                value={lectures}
-                onChange={handleLecturesChange}
-                placeholder="Enter number of Lectures"
-              />
-            </td>
-            <td>
-              <input
-                type="number"
-                value={seminars}
-                onChange={handleSeminarsChange}
-                placeholder="Enter number of Seminars"
-              />
-            </td>
-            <td>
-              <input
-                type="number"
-                value={tutorial}
-                onChange={handleTutorialChange}
-                placeholder="Enter number of Tutorials"
-              />
-            </td>
-            <td>
-              <input
-                type="number"
-                value={labs}
-                onChange={handleLabsChange}
-                placeholder="Enter number of Labs"
-              />
-            </td>
-            <td>
-              <input
-                type="number"
-                value={fieldworkPlacement}
-                onChange={handleFieldworkPlacementChange}
-                placeholder="Enter Fieldwork Placement"
-              />
-            </td>
-            <td>
-              <input
-                type="number"
-                value={other}
-                onChange={handleOtherChange}
-                placeholder="Enter Other"
-              />
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      <h2>Assessments</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Assessment Type</th>
-            <th>Weightage (%)</th>
-            <th>Deadline (Week)</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {assessments.map((assessment, index) => (
-            <tr key={index}>
-              <td>
-                <select
-                  value={assessment.assessmentType}
-                  onChange={(event) =>
-                    handleAssessmentTypeInputChange(event, index)
-                  }
-                >
-                  <option value="exam">Exam</option>
-                  <option value="coursework">Coursework</option>
-                </select>
-              </td>
-              <td>
-                <input
-                  type="number"
-                  value={assessment.weightage}
-                  onChange={(event) => handleWeightageInputChange(event, index)}
-                  placeholder="Enter Weightage"
-                />
-              </td>
-              <td>
-                <input
-                  type="number"
-                  value={assessment.deadline}
-                  onChange={(event) => handleDeadlineInputChange(event, index)}
-                  placeholder="Enter Deadline"
-                />
-              </td>
-              <td>
-                <button onClick={() => deleteAssessment(index)}>Delete</button>
-                <button>Edit</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      <button onClick={addAssessment}>Add Assessment</button>
-      <button onClick={handleSubmit}>Save All Data</button>
-    </div>
+      )}
+    </>
   );
 };
 

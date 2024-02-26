@@ -20,7 +20,6 @@ export function useModulePage() {
         const data = response.data;
         if (Array.isArray(data)) {
           setModules(data);
-          console.log("Fetched modules:", data);
         } else {
           console.error("Fetched data is not an array:", data);
         }

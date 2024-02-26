@@ -5,13 +5,12 @@ import ModuleSelection from "../Buttons/ModuleSelection";
 import StudyHoursLineGraph from "../LineGraph/LineGraph";
 import ExportPDFButton from "../ExportPDF/ExportPDF";
 import axios from "axios";
-import { Box, ButtonGroup, Button } from "@mui/material";
+import { Box } from "@mui/material";
 
-function App() {
+function HomePage({ userRole }) {
   const [moduleData, setModuleData] = useState(null);
   const [selectedStudyStyle, setSelectedStudyStyle] = useState("balanced");
   const [selectedModule, setSelectedModule] = useState("");
-  const [userRole, setUserRole] = useState("Student");
 
   const handleDocumentUpdate = (selectedModule) => {
     axios
@@ -28,41 +27,8 @@ function App() {
     }
   }, [selectedModule]);
 
-  const isSelected = (role) => userRole === role;
-
   return (
     <Box className="app-container" sx={{ padding: 2 }}>
-      <Box sx={{ marginBottom: 4 }}>
-        <h1>SWEAT Project</h1>
-        <ButtonGroup
-          variant="contained"
-          aria-label="outlined primary button group"
-          sx={{ marginTop: 2 }}
-        >
-          {["Student", "Admin"].map((role) => (
-            <Button
-              key={role}
-              onClick={() => setUserRole(role)}
-              variant={isSelected(role) ? "contained" : "outlined"}
-              sx={{
-                backgroundColor: isSelected(role)
-                  ? "primary.main"
-                  : "transparent",
-                color: isSelected(role) ? "#fff" : "primary.main",
-                borderColor: "primary.main",
-                "&:hover": {
-                  backgroundColor: isSelected(role)
-                    ? "primary.dark"
-                    : "transparent",
-                  color: isSelected(role) ? "#fff" : "primary.dark",
-                },
-              }}
-            >
-              {role}
-            </Button>
-          ))}
-        </ButtonGroup>
-      </Box>
       <Box sx={{ marginX: 2, marginBottom: 4 }}>
         <ModuleSelection
           setModuleData={setModuleData}
@@ -88,13 +54,8 @@ function App() {
           />
         </Box>
       )}
-      {userRole === "Admin" && (
-        <Box sx={{ marginBottom: 4 }}>
-          <InputForm />
-        </Box>
-      )}
     </Box>
   );
 }
 
-export default App;
+export default HomePage;

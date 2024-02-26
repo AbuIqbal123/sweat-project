@@ -21,8 +21,6 @@ const StudyHoursLineGraph = ({
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  console.log(moduleData);
-
   const toggleModal = () => setIsModalOpen(!isModalOpen);
 
   if (!moduleData) {

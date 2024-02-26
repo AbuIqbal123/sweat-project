@@ -158,7 +158,6 @@ const transformInputToDatabaseSchema = async (inputData) => {
     };
 
     if (_id) {
-      console.log("Updating document with _id:", _id);
       const documentId = new mongoose.Types.ObjectId(_id);
       const updatedDoc = await TransformedDataModel.findByIdAndUpdate(
         documentId,

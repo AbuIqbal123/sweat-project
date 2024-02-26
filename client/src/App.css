@@ -1,5 +1,7 @@
 /* App.css */
-
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 /* Container for the entire app */
 .app-container {
   font-family: Arial, sans-serif;
@@ -38,6 +40,12 @@
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 20px;
+}
+
+/* index.css or App.css */
+
+body {
+  font-family: 'Montserrat', sans-serif;
 }
 
 /* Add more custom styles as needed */
