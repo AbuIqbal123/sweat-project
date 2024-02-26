@@ -142,13 +142,13 @@ const StudyHoursLineGraph = ({
   // Return the study hours line graph
   return (
     <div className="study-hours-line-graph-container">
-      <div className="graph-title">Study Hours Line Graph</div>
+      <div className="graph-title">{moduleData.moduleCode} Line Graph</div>
       <div className="chart-container">
         <LineChart
           width={600}
           height={300}
           data={data}
-          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+          margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
@@ -163,7 +163,7 @@ const StudyHoursLineGraph = ({
           <Tooltip
             content={<CustomTooltip totalStudyHours={totalStudyHours} />}
           />
-          <Legend wrapperStyle={{ marginTop: "30px" }} />
+          <Legend  align="center"  />
 
           <Line
             type="monotone"

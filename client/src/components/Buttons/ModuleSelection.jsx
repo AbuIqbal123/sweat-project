@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Select, MenuItem, FormControl, InputLabel } from "@mui/material";
+import { Select, MenuItem, FormControl, InputLabel, Typography, Box } from "@mui/material";
+import "./ModuleSelection.css"; // Import CSS file for styling
 
 const ModuleSelection = ({
   setModuleData,
@@ -8,7 +9,7 @@ const ModuleSelection = ({
   setSelectedModule,
   handleDocumentUpdate,
 }) => {
-  const [selectedModule, setSelectedModuleLocal] = useState(""); // Local state to track the selected module code
+  const [selectedModule, setSelectedModuleLocal] = useState("ELEC191"); // Local state to track the selected module code
   const [selectedStudyStyle, setSelectedStudyStyleLocal] = useState("balanced");
   const [modules, setModules] = useState([]);
   const [moduleData, setLocalModuleData] = useState(null);
@@ -60,35 +61,41 @@ const ModuleSelection = ({
   };
 
   return (
-    <div className="module-selection">
-      <div className="header">
-        <FormControl>
-          <InputLabel id="module-select-label">Select Module</InputLabel>
-          <Select
-            labelId="module-select-label"
-            value={selectedModule}
-            onChange={handleModuleChange}
-          >
-            {modules.map((module) => (
-              <MenuItem key={module._id} value={module.moduleCode}>
-                {module.moduleCode}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControl>
-          <InputLabel id="style-select-label">Select Study Style</InputLabel>
-          <Select
-            labelId="style-select-label"
-            value={selectedStudyStyle}
-            onChange={handleStudyStyleChange}
-          >
-            <MenuItem value="balanced">Balanced</MenuItem>
-            <MenuItem value="procrastinator">Procrastinator</MenuItem>
-            <MenuItem value="earlybird">Early Bird</MenuItem>
-          </Select>
-        </FormControl>
-      </div>
+    <div className="module-selection-container">
+      <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginBottom: 2 }}>
+        <div>
+          <Typography variant="subtitle1" color="textPrimary">
+            Select Module:
+          </Typography>
+          <FormControl>
+            <Select
+              value={selectedModule}
+              onChange={handleModuleChange}
+            >
+              {modules.map((module) => (
+                <MenuItem key={module._id} value={module.moduleCode}>
+                  {module.moduleCode}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </div>
+        <div>
+          <Typography variant="subtitle1" color="textPrimary">
+            Select Study Style:
+          </Typography>
+          <FormControl>
+            <Select
+              value={selectedStudyStyle}
+              onChange={handleStudyStyleChange}
+            >
+              <MenuItem value="balanced">Balanced</MenuItem>
+              <MenuItem value="procrastinator">Procrastinator</MenuItem>
+              <MenuItem value="earlybird">Early Bird</MenuItem>
+            </Select>
+          </FormControl>
+        </div>
+      </Box>
     </div>
   );
 };

@@ -1,42 +1,40 @@
-/* LandingPage.css */
 .container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    font-family: Montserrat, sans-serif;
-  }
-  
-  .heading {
-    font-size: 2.5rem;
-    margin-bottom: 20px;
-  }
-  
-  .description {
-    font-size: 1.2rem;
-    margin-bottom: 30px;
-  }
-  
-  .buttonContainer {
-    display: flex;
-    justify-content: center;
-  }
-  
-  .button {
-    margin-right: 20px;
-    padding: 10px 20px;
-    font-size: 1rem;
-    border: 1px solid #000;
-    background-color: transparent;
-    color: #000;
-    text-decoration: none;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-  
-  .button:hover {
-    background-color: #000;
-    color: #fff;
-  }
-  
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  font-family: Montserrat, sans-serif;
+}
+
+.heading {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+}
+
+.description {
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+}
+
+.button {
+  margin-right: 20px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border: 1px solid #000;
+  background-color: transparent;
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.button:hover {
+  background-color: #000;
+  color: #fff;
+}
