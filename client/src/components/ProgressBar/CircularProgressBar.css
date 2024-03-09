@@ -1,0 +1,41 @@
+.circular-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Assuming you have a size set somewhere, you might adjust it based on viewport size */
+}
+
+.ant-progress-circle-path {
+  stroke: #0036ee; /* Darker shade of blue for the circle */
+}
+
+.ant-progress-outer {
+  border: 12px solid #c2e3ff; /* Lighter shade of blue for the progress bar */
+}
+
+.ant-progress-text {
+  font-weight: bold;
+  color: white; /* Change the color to white */
+}
+
+/* Adjust font size and progress bar thickness on smaller screens */
+@media (max-width: 768px) {
+  .ant-progress-text {
+    font-size: smaller; /* Adjust font size for smaller devices */
+  }
+
+  .ant-progress-outer {
+    border: 8px solid #c2e3ff; /* Make the border slightly thinner on smaller screens */
+  }
+}
+
+/* Further adjustments for very small devices */
+@media (max-width: 480px) {
+  .ant-progress-text {
+    font-size: even smaller; /* Further decrease font size for very small devices */
+  }
+
+  .ant-progress-outer {
+    border: 6px solid #c2e3ff; /* Further thin the border for very small screens */
+  }
+}

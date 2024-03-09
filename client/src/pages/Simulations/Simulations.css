@@ -1,0 +1,201 @@
+.area-chart-container {
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(66, 73, 97, 0.53) !important;
+  border-radius: 2rem;
+  margin-left: 30px;
+  justify-content: center;
+}
+
+.firstHeading {
+  color: white;
+  font-size: 20px;
+  font-family: "Benzin-Medium";
+  margin-left: 50px;
+}
+.main-chart-container {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  background: linear-gradient(to right, #0f0c29, #302b63, #24243e);
+  height: 100vh;
+  width: 100vw;
+}
+
+.chart {
+  background-color: aliceblue;
+}
+
+.responsive-container {
+  background-color: aliceblue;
+}
+
+.insights-container {
+  background-color: rgba(66, 73, 97, 0.53) !important;
+  border-radius: 2rem;
+}
+.secondHeading {
+  color: white;
+  font-size: 20px;
+  font-family: "Benzin-Medium";
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.progress-1 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.h2First {
+  margin-top: 10px;
+  color: #fff;
+  /*font-family: "Benzin-Semibold";*/
+  font-size: 15px;
+  text-transform: capitalize;
+}
+.parent-insights {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 30px;
+}
+.inputt {
+  margin-top: 3rem;
+}
+.inputt select {
+  height: 2rem;
+  margin: 0.5rem 2rem;
+  padding: 0 10px; /* Added padding */
+  font-size: 1rem;
+  background: rgba(255, 255, 255, 0.2); /* Slightly visible background */
+  border: 1px solid rgba(255, 255, 255, 0.4); /* Subtle border */
+  color: #fff; /* Ensure text is visible */
+  border-radius: 10px; /* Rounded corners */
+}
+
+.inputt option {
+  font-family: "Benzin-Medium";
+  background: linear-gradient(to right, #0f0c29, #302b63, #24243e);
+  color: #fff; /* Ensure option text is visible */
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin-top: 2rem;
+}
+
+/* Common styles for both buttons */
+.details-button,
+.preview-pdf-button {
+  padding: 10px 20px; /* Reduced padding for smaller buttons */
+  border-radius: 2rem;
+  font-family: "Benzin-Medium", sans-serif;
+  font-size: 0.7rem; /* Smaller font size */
+  font-weight: 600;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent; /* Default border set to transparent */
+}
+
+/* Styles specific to the details button */
+.details-button {
+  background-color: #fff;
+  color: #000;
+  border-color: #000; /* Border color for the white button */
+}
+
+/* Styles specific to the preview PDF button */
+.preview-pdf-button {
+  background-color: #5643fa;
+  color: #fff;
+}
+
+/* Hover effects for both buttons */
+.details-button:hover,
+.preview-pdf-button:hover {
+  background-color: #011222; /* Dark background for hover */
+  color: #fff; /* White text for hover */
+}
+
+/* Text inside button */
+.details-button span,
+.preview-pdf-button span {
+  display: inline-block;
+  transition: transform 0.3s ease-out;
+}
+
+/* Initially hidden arrow icon inside button */
+.details-button i,
+.preview-pdf-button i {
+  display: inline-block;
+  transition: transform 0.3s ease-out, opacity 0.3s ease;
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+/* Hover state to make arrow icon visible and move text */
+.details-button:hover span,
+.preview-pdf-button:hover span {
+  transform: translateX(-10px); /* Move text to the left */
+}
+
+.details-button:hover i,
+.preview-pdf-button:hover i {
+  opacity: 1; /* Make arrow icon visible */
+  transform: translateX(0px); /* Move arrow icon into view */
+}
+
+/* Unicode arrow for simplicity */
+.details-button i::before,
+.preview-pdf-button i::before {
+  content: "→";
+  font-size: 1rem;
+  font-weight: bold;
+  margin-left: 10px;
+}
+
+@media only screen and (max-width: 768px) {
+  .details-button,
+  .preview-pdf-button {
+    padding: 8px 16px; /* Adjusted padding for smaller screens */
+    font-size: 0.6rem; /* Adjusted font size for smaller screens */
+  }
+
+  .details-button i,
+  .preview-pdf-button i {
+    margin-left: 5px; /* Adjusted margin for the arrow icon */
+  }
+
+  .details-button i::before,
+  .preview-pdf-button i::before {
+    font-size: 0.8rem; /* Adjusted arrow size for smaller screens */
+  }
+}
+
+@media only screen and (max-width: 576px) {
+  .details-button,
+  .preview-pdf-button {
+    padding: 6px 12px; /* Further reduced padding for smaller screens */
+    font-size: 0.5rem; /* Further reduced font size for smaller screens */
+  }
+
+  .details-button i,
+  .preview-pdf-button i {
+    margin-left: 3px; /* Further adjusted margin for the arrow icon */
+  }
+
+  .details-button i::before,
+  .preview-pdf-button i::before {
+    font-size: 0.7rem; /* Further adjusted arrow size for smaller screens */
+  }
+}

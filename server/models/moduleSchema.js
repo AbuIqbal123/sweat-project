@@ -1,39 +1,78 @@
 const mongoose = require("mongoose");
 
+const distributionSchema = new mongoose.Schema({
+  week: Number,
+  hours: Number,
+});
+
 const moduleSchema = new mongoose.Schema({
   moduleCode: String,
-  moduleTitle: String,
+  studyYear: Number,
+  title: String,
+  optional: Boolean,
+  programme: [String],
+  semester: String,
   moduleCredit: Number,
-  moduleSemester: String,
-  courses: [String], // Array of strings to hold multiple course names
   totalStudyHours: Number,
   timetabledHours: Number,
   privateStudyHours: Number,
-  labs: [{ week: Number, hours: Number }],
-  lectures: [{ week: Number, hours: Number }],
-  tutorials: [{ week: Number, hours: Number }],
-  seminars: [{ week: Number, hours: Number }],
-  fieldworkPlacement: [{ week: Number, hours: Number }],
-  other: [{ week: Number, hours: Number }],
-  examPrep: {
-    weeks: [Number],
-    weightage: Number,
+  lectures: {
+    hours: Number,
+    distribution: [distributionSchema],
   },
-  coursework: [
+  seminars: {
+    hours: Number,
+    distribution: [distributionSchema],
+  },
+  tutorials: {
+    hours: Number,
+    distribution: [distributionSchema],
+  },
+  labs: {
+    hours: Number,
+    distribution: [distributionSchema],
+  },
+  fieldworkPlacement: {
+    hours: Number,
+    distribution: [distributionSchema],
+  },
+  other: {
+    hours: Number,
+    distribution: [distributionSchema],
+  },
+  examPrep: {
+    deadline: Number,
+    weightage: Number,
+    studyHours: Number,
+    distribution: [distributionSchema],
+  },
+  courseworkPrep: [
     {
-      assessmentType: String,
-      studyHours: Number,
-      weightage: Number,
       deadline: Number,
+      weightage: Number,
+      studyHours: Number,
+      distribution: {
+        earlybird: [distributionSchema],
+        moderate: [distributionSchema],
+        procrastinator: [distributionSchema],
+      },
     },
   ],
-  courseworkPrep: {
-    balanced: [{ week: Number, hours: Number }],
-    procrastinator: [{ week: Number, hours: Number }],
-    earlybird: [{ week: Number, hours: Number }],
-  },
+  classtestPrep: [
+    {
+      deadline: Number,
+      weightage: Number,
+      studyHours: Number,
+      distribution: {
+        earlybird: [distributionSchema],
+        moderate: [distributionSchema],
+        procrastinator: [distributionSchema],
+      },
+    },
+  ],
+  totalHours: [distributionSchema],
 });
 
-const ModuleModel = mongoose.model("Module", moduleSchema);
+const Module = mongoose.model("Module", moduleSchema);
 
-module.exports = ModuleModel;
+module.exports = Module;

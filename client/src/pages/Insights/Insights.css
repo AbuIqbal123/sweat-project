@@ -1,0 +1,173 @@
+.area-chart-container {
+  width: 60vw;
+  height: 75vh;
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(66, 73, 97, 0.53) !important;
+  border-radius: 2rem;
+  margin-top: 50px;
+  margin-left: 30px;
+  justify-content: center;
+}
+.chart {
+  width: 100%;
+  height: 50vh;
+  margin-top: 30px;
+}
+.firstHeading {
+  color: white;
+  font-size: 20px;
+  font-family: "Benzin-Medium";
+  margin-left: 50px;
+}
+.main-chart-container {
+  width: auto;
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  height: 100vh;
+}
+.insights-container {
+  background-color: rgba(66, 73, 97, 0.53) !important;
+  border-radius: 30px;
+  width: 30vw;
+  height: 75vh;
+  margin-top: 50px;
+}
+.secondHeading {
+  color: white;
+  font-size: 20px;
+  font-family: "Benzin-Medium";
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.progress-1 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.h2First {
+  margin-top: 10px;
+  color: #fff;
+  /*font-family: "Benzin-Semibold";*/
+  font-size: 15px;
+  text-transform: capitalize;
+}
+.parent-insights {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 30px;
+}
+.inputt {
+  margin-top: 3rem;
+}
+.inputt select {
+  height: 2rem;
+  margin: 0.5rem 2rem;
+  font-size: 1rem;
+  background: none;
+  border: none;
+  color: #fff;
+}
+
+.inputt p {
+  height: 2rem;
+  margin: 0.5rem 2rem;
+  font-size: 1rem;
+  background: none;
+  border: none;
+  color: #fff;
+}
+.inputt option {
+  font-family: "Benzin-Medium";
+}
+.details-btn {
+  background: transparent;
+  display: flex;
+  border: none;
+  justify-content: start;
+  margin: 0.5rem 2rem;
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+/* Adjustments for tablets */
+@media (max-width: 768px) {
+  .area-chart-container,
+  .insights-container {
+    width: 80vw; /* Adjust width for smaller screens */
+    height: auto; /* Make height auto to accommodate content */
+    margin-top: 20px;
+    margin-left: 15px;
+  }
+
+  .chart {
+    height: 40vh; /* Adjust chart height for smaller screens */
+  }
+
+  .main-chart-container {
+    flex-direction: column; /* Stack elements vertically */
+    gap: 20px; /* Reduce gap */
+    padding: 10px; /* Add some padding */
+  }
+
+  .firstHeading,
+  .secondHeading {
+    font-size: 18px; /* Adjust heading font size */
+    margin-left: 20px; /* Adjust margin */
+  }
+
+  .h2First {
+    font-size: 13px; /* Adjust font size for subheadings */
+  }
+
+  .inputt select,
+  .inputt p,
+  .details-btn {
+    margin: 0.5rem 1rem; /* Adjust margin */
+    font-size: 0.9rem; /* Adjust font size */
+  }
+}
+
+/* Adjustments for mobile phones */
+@media (max-width: 480px) {
+  .area-chart-container,
+  .insights-container {
+    width: 90vw; /* Increase width for very small screens */
+    margin-left: 5px; /* Reduce margin */
+  }
+
+  .chart {
+    height: 30vh; /* Further adjust chart height for mobile screens */
+  }
+
+  .firstHeading,
+  .secondHeading {
+    font-size: 16px; /* Further adjust heading font size */
+    margin-left: 10px; /* Adjust margin */
+  }
+
+  .h2First {
+    font-size: 12px; /* Further adjust font size for subheadings */
+  }
+
+  .inputt select,
+  .inputt p,
+  .details-btn {
+    margin: 0.5rem; /* Adjust margin */
+    font-size: 0.8rem; /* Further adjust font size */
+  }
+
+  .main-chart-container {
+    padding: 0; /* Adjust or remove padding */
+  }
+
+  .parent-insights {
+    flex-direction: column; /* Stack insights vertically on very small screens */
+  }
+}

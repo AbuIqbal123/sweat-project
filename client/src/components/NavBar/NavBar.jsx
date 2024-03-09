@@ -1,73 +1,82 @@
-import React, { useState } from "react";
-import {
-  AppBar,
-  Toolbar,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-} from "@mui/material";
-import { NavLink } from "react-router-dom";
-import "./NavBar.css"; 
+import "./Navbar.css";
+import { Link, useLocation } from "react-router-dom";
+import { AuthContext } from "../../context/authContext";
+import { useContext } from "react";
 
-const toTitleCase = (str) => {
-  return str.replace(
-    /\w\S*/g,
-    (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
-  );
-};
+const Navbar = () => {
+  const { isStudent, setIsStudent } = useContext(AuthContext);
+  const location = useLocation();
 
-const NavBar = ({ userRole, setUserRole }) => {
-  const handleChange = (event) => {
-    setUserRole(event.target.value);
-  };
+  const navItems = [
+    {
+      title: "Home",
+      link: "/",
+    },
+    {
+      title: "Modules",
+      link: "/previous-courses",
+    },
+    {
+      title: "Input Modules",
+      link: "/select-course",
+    },
+    {
+      title: "Simulations",
+      link: "/simulations",
+    },
+    {
+      title: "Stacked Simulations",
+      link: "/stacked-simulations",
+    },
+  ];
 
   return (
-    <AppBar position="static" className="navBar">
-      <Toolbar className="toolbar">
-        <div className="navLinks">
-          <NavLink to="/" className="navLink" activeClassName="active">
-            {toTitleCase("home")}
-          </NavLink>
-          <NavLink
-            to="/simulations"
-            className="navLink"
-            activeClassName="active"
-          >
-            {toTitleCase("simulations")}
-          </NavLink>
-          <NavLink to="/modules" className="navLink" activeClassName="active">
-            {toTitleCase("modules")}
-          </NavLink>
-          <NavLink
-            to="/input-modules"
-            className="navLink"
-            activeClassName="active"
-          >
-            {toTitleCase("input modules")}
-          </NavLink>
+    <div className="cont">
+      <div className="container">
+        <div className="logo">
+          <h1 style={{ fontFamily: "Benzin-Medium" }}>Sweat</h1>
         </div>
-        <div className="selectRole">
-          <FormControl variant="standard" sx={{ minWidth: 120 }}>
-            <InputLabel id="role-select-label" className="roleLabel">
-              Role
-            </InputLabel>
-            <Select
-              labelId="role-select-label"
-              id="role-select"
-              value={userRole}
-              onChange={handleChange}
-              label="Role"
-              sx={{ fontFamily: "Montserrat, sans-serif" }}
-            >
-              <MenuItem value="Student">Student</MenuItem>
-              <MenuItem value="Admin">Admin</MenuItem>
-            </Select>
-          </FormControl>
+        {/* Existing code above */}
+        <div className="links">
+          <ul>
+            {navItems.map((item, index) => {
+              if (isStudent === "Student" && item.title === "Input Modules") {
+                return null; // This change makes the return more explicit
+              } else {
+                return (
+                  <li key={index}>
+                    <Link
+                      to={item.link}
+                      className={
+                        location.pathname === item.link ? "link-active" : "link"
+                      }
+                    >
+                      {item.title}
+                    </Link>
+                  </li>
+                );
+              }
+            })}
+            <li className="role-dropdown">
+              {" "}
+              {/* Encapsulate dropdown with a label */}
+              <label htmlFor="is_student">Role:</label>
+              <select
+                className="navDropDown"
+                name="is_student"
+                id="is_student"
+                onChange={(e) => setIsStudent(e.target.value)}
+                value={isStudent}
+              >
+                <option value="Student">Student</option>
+                <option value="Admin">Admin</option>
+              </select>
+            </li>
+          </ul>
         </div>
-      </Toolbar>
-    </AppBar>
+      </div>
+    </div>
   );
 };
 
-export default NavBar;
+export default Navbar;

@@ -1,32 +1,41 @@
-import React, { useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import HomePage from "./components/HomePage/HomePage";
-import ModulesPage from "./components/ModulesPage/ModulesPage";
-import LandingPage from "./components/LandingPage/LandingPage";
-import NavBar from "./components/NavBar/NavBar";
-import InputForm from "./components/InputForm/InputForm";
+import "./App.css";
+import CourseSelection from "./pages/CourseSelection/CourseSelection";
+import Navbar from "./components/Navbar/Navbar";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Home from "./pages/Home/Home.jsx";
+import PreviousCourses from "./pages/PreviousCourses/PreviousCourses.jsx";
+import Simulations from "./pages/Simulations/Simulations";
+import PreviewPdf from "./pages/PreviewPdf/index.jsx";
+import Insights from "./pages/Insights/Insights.jsx";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import StackedSimulations from "./pages/StackedSimulations/StackedSimulations.jsx";
 
 function App() {
-  const [userRole, setUserRole] = useState("Student");
-
   return (
-    <Router>
-      <div>
-        <NavBar userRole={userRole} setUserRole={setUserRole} />
+    <div
+      style={{
+        background: "linear-gradient(to right, #0f0c29, #302b63, #24243e)",
+        height: "100vh",
+      }}
+    >
+      <BrowserRouter>
+        <Navbar />
         <Routes>
-          <Route path="/" element={<LandingPage />} />
+          <Route path={"/"} element={<Home />} />
+          <Route path={"/select-course"} element={<CourseSelection />} />
+          <Route path={"/previous-courses"} element={<PreviousCourses />} />
+          <Route path={"/simulations"} element={<Simulations />} />
+          <Route path={"/preview-pdf"} element={<PreviewPdf />} />
+          <Route path={"/insight/:id"} element={<Insights />} />
           <Route
-            path="/simulations"
-            element={<HomePage userRole={userRole} />}
-          />
-          <Route path="/modules" element={<ModulesPage />} />
-          <Route
-            path="/input-modules"
-            element={<InputForm userRole={userRole} />}
+            path={"/stacked-simulations"}
+            element={<StackedSimulations />}
           />
         </Routes>
-      </div>
-    </Router>
+      </BrowserRouter>
+      <ToastContainer />
+    </div>
   );
 }
 

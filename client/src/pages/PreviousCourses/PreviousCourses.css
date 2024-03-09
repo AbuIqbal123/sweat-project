@@ -1,0 +1,82 @@
+.pdfButton {
+  background-color: #5643fa;
+  color: #fff;
+  padding: 15px 30px;
+  border-radius: 2rem;
+  font-family: "Benzin-Medium";
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+  border: none;
+  cursor: pointer;
+  display: inline-block;
+  transition: background-color 0.3s ease;
+  top: -50px;
+}
+
+.pdfButton span,
+.pdfButton i {
+  transition: transform 0.3s ease-out;
+}
+
+.pdfButton i {
+  position: absolute;
+  right: -20px; /* Start with the icon outside the button */
+  opacity: 0; /* Icon is transparent initially */
+  transition: opacity 0.3s ease, right 0.3s ease; /* Smooth transitions for the icon */
+}
+
+.pdfButton:hover {
+  background-color: #4133de;
+}
+
+.pdfButton:hover span {
+  transform: translateX(-10px); /* Move text to the left */
+}
+
+.pdfButton:hover i {
+  right: 20px; /* Move icon inside the button */
+  opacity: 1; /* Make icon opaque */
+}
+
+.pdfButton i::before {
+  content: "→"; /* Unicode arrow, you can use any arrow symbol here */
+  font-size: 1rem; /* Adjust size as needed */
+  font-weight: bold; /* Ensure the arrow is bold enough */
+}
+
+@media only screen and (max-width: 768px) {
+  .pdfButton {
+    top: 0; /* Adjust top position for smaller screens */
+  }
+
+  .pdfButton i {
+    right: 0; /* Adjust icon position for smaller screens */
+  }
+
+  .pdfButton:hover i {
+    right: 10px; /* Adjust icon position on hover for smaller screens */
+  }
+}
+
+@media only screen and (max-width: 576px) {
+  .pdfButton {
+    padding: 10px 20px; /* Adjust padding for smaller screens */
+    font-size: 0.7rem; /* Adjust font size for smaller screens */
+  }
+
+  .pdfButton i {
+    right: -10px; /* Adjust icon position for even smaller screens */
+  }
+
+  .pdfButton:hover i {
+    right: 10px; /* Adjust icon position on hover for even smaller screens */
+  }
+
+  .pdfButton i::before {
+    font-size: 0.9rem; /* Adjust arrow size for even smaller screens */
+  }
+}

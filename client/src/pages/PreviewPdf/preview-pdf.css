@@ -1,0 +1,152 @@
+.pdf_preview_container {
+  background-color: white;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 2rem; /* Rounded border radius */
+  max-width: 90%; /* Adjust the maximum width as needed */
+  margin-left: auto; /* Automatically adjust margin from left */
+  margin-right: auto; /* Automatically adjust margin from right */
+}
+
+.pdf_image_container {
+  display: flex;
+  justify-content: center;
+  padding: 10px 10px;
+}
+
+.download-button {
+  margin-top: 20px;
+  padding: 15px 30px;
+  border-radius: 2rem;
+  background-color: #5643fa;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-family: "Benzin-Medium";
+  font-size: 0.7rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.download-button:hover {
+  background-color: #6851f1; /* Slightly lighter purple on hover */
+  transform: translateY(-3px); /* Slight lift effect */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25); /* Enhanced shadow on hover */
+}
+
+.pdf_table_data pre {
+  font-size: 10px;
+  padding-bottom: 10px;
+  letter-spacing: 1px;
+}
+
+.filter_data_holder {
+  display: flex;
+  justify-content: center;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.filter_data_holder spam {
+  margin-left: 20px;
+}
+
+.pdf_table_headers {
+  font-size: 10px;
+}
+
+.graph_data_holder {
+  display: flex;
+  justify-content: center;
+  margin-top: 50px;
+  margin-bottom: 15px;
+}
+
+.graph_data_holder spam {
+  padding-left: 20px;
+}
+
+.pdf_table_container table {
+  width: 100%;
+}
+
+.pdf_preview_table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.pdf_preview_table th,
+.pdf_preview_table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+/* Adjustments for tablets and smaller desktops */
+@media only screen and (max-width: 768px) {
+  .pdf_preview_container {
+    border-radius: 1rem;
+    max-width: 95%; /* Allow the container to occupy a bit more width for better space utilization */
+  }
+
+  .download-button {
+    margin-top: 15px;
+    padding: 10px 20px; /* Slightly reduce padding for smaller screens */
+    font-size: 0.6rem; /* Adjust font size for better fit */
+  }
+
+  .pdf_table_data pre,
+  .pdf_table_headers {
+    font-size: 8px; /* Reduce font size for table data and headers for readability */
+  }
+
+  .filter_data_holder,
+  .graph_data_holder {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .filter_data_holder spam,
+  .graph_data_holder spam {
+    margin-left: 0;
+    margin-top: 10px;
+  }
+}
+
+/* Additional adjustments for mobile phones */
+@media only screen and (max-width: 480px) {
+  .pdf_preview_container {
+    padding: 5px; /* Reduce padding for tighter spacing */
+    margin-top: 5px; /* Reduce margin-top for closer alignment to top elements */
+  }
+
+  .download-button {
+    margin-top: 10px;
+    padding: 8px 15px; /* Further reduce padding for smaller screens */
+    font-size: 0.5rem; /* Further reduce font size to ensure it fits well */
+  }
+
+  .pdf_table_data pre,
+  .pdf_table_headers {
+    font-size: 7px; /* Further reduce font size for very small screens */
+  }
+
+  /* Adjust spacing for filter and graph data holders to better fit mobile screens */
+  .filter_data_holder,
+  .graph_data_holder {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .filter_data_holder spam,
+  .graph_data_holder spam {
+    margin-top: 5px;
+  }
+}
